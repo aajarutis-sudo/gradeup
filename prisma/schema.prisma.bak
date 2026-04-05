@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum Subject {
+  English_Literature
+  English_Language
+  Business
+  Combined_Science
+  Geography
+  Computer_Science
+  Mathematics
+}
+
+enum ExamBoard {
+  AQA
+  Edexcel
+  OCR
+  Other
+}
+
+model User {
+  id         Int         @id @default(autoincrement())
+  clerkId    String      @unique
+  email      String?     @unique
+  name       String?
+  createdAt  DateTime    @default(now())
+  progress   UserProgress[]
+  flashcards Flashcard[]
+}
+
+model UserProgress {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  subject   Subject
+  examBoard ExamBoard
+  topic     String
+  progress  Int      @default(0)
+  updatedAt DateTime @updatedAt
+  @@index([userId, subject, examBoard])
+}
+
+model Flashcard {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  subject   Subject
+  examBoard ExamBoard
+  topic     String
+  question  String
+  answer    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId, subject, examBoard])
+}

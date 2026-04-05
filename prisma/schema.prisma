@@ -1,0 +1,469 @@
+datasource db {
+  provider = "sqlite"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+//
+// USERS
+//
+model User {
+  id        String   @id @default(cuid())
+  clerkId   String   @unique
+  email     String?
+  name      String?
+  onboardedAt DateTime?
+  createdAt DateTime @default(now())
+
+  quizAttempts        QuizAttempt[]
+  spacedRepetition    SpacedRepetitionCard[]
+  progress            UserProgress[]
+  weaknessPredictions WeaknessPrediction[]
+  badges              RevisionBadge[]
+  userStreak          UserStreak[]
+  rpgProfile          RevisionRPGProfile?
+  selectedSubjects    UserSubject[]
+  questionAnswers     QuestionAnswer[]
+  timedAttempts       TimedAttempt[]
+  subjectPredictions  UserSubjectPrediction[]
+  focusAreas          UserFocusArea[]
+  xp                  UserXP?
+
+}
+// SUBJECTS
+//
+model Subject {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  name        String?  // Alias for title for backward compatibility
+  description String?
+  color       String?
+  examBoard   String?
+  createdAt   DateTime @default(now())
+
+  topics           Topic[]
+  pastPapers       PastPaper[]
+  userSelections   UserSubject[]
+  questions        Question[]
+  timedQuestions   TimedQuestion[]
+  predictions      UserSubjectPrediction[]
+  focusAreas       UserFocusArea[]
+
+}
+
+//
+// TOPICS
+//
+model Topic {
+  id        String   @id @default(cuid())
+  title     String
+  subjectId String
+  slug      String   @unique
+  summary   String?
+  estimatedMins Int  @default(25)
+  orderIndex Int     @default(0)
+  questionCount Int  @default(0)
+  examBoard String?
+  createdAt DateTime @default(now())
+
+  subject             Subject              @relation(fields: [subjectId], references: [id])
+  flashcards          Flashcard[]
+  quizAttempts        QuizAttempt[]
+  progress            UserProgress[]
+  weaknessPredictions WeaknessPrediction[]
+  questions           Question[]
+  focusAreas          UserFocusArea[]
+  lessons             Lesson[]
+  subtopics           Subtopic[]
+}
+
+//
+// FLASHCARDS
+//
+model Flashcard {
+  id        String   @id @default(cuid())
+  topicId   String
+  question  String
+  answer    String
+  createdAt DateTime @default(now())
+
+  topic      Topic                  @relation(fields: [topicId], references: [id])
+  spacedReps SpacedRepetitionCard[]
+}
+
+//
+// SPACED REPETITION CARDS
+//
+model SpacedRepetitionCard {
+  id             String   @id @default(cuid())
+  userId         String
+  flashcardId    String
+  quality        Int?
+  interval       Int      @default(0)
+  easeFactor     Float    @default(2.5)
+  repetitions    Int      @default(0)
+  nextReviewAt   DateTime?
+  lastReviewAt   DateTime?
+  createdAt      DateTime @default(now())
+
+  user      User      @relation(fields: [userId], references: [id])
+  flashcard Flashcard @relation(fields: [flashcardId], references: [id])
+}
+
+//
+// QUIZ ATTEMPTS
+//
+model QuizAttempt {
+  id             String   @id @default(cuid())
+  userId         String
+  topicId        String
+  score          Int      @default(0)
+  correctAnswers Int
+  totalQuestions Int
+  createdAt      DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  topic Topic @relation(fields: [topicId], references: [id])
+  answers QuizAttemptAnswer[]
+}
+
+//
+// USER PROGRESS
+//
+model UserProgress {
+  id        String   @id @default(cuid())
+  userId    String
+  topicId   String
+  completed Int      @default(0)
+  score     Int      @default(0)
+  lastActivity String?
+  lastStudiedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User  @relation(fields: [userId], references: [id])
+  topic Topic @relation(fields: [topicId], references: [id])
+
+  @@unique([userId, topicId], name: "userId_topicId")
+}
+
+//
+// WEAKNESS PREDICTIONS
+//
+model WeaknessPrediction {
+  id                 String   @id @default(cuid())
+  userId             String
+  topicId            String
+  riskScore          Int
+  confidenceScore    Int
+  predictedMarkLoss  Int
+  recommendedActions String
+  targetBy           DateTime
+  createdAt          DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  topic Topic @relation(fields: [topicId], references: [id])
+
+  @@unique([userId, topicId])
+}
+
+//
+// RPG PROFILE
+//
+model RevisionRPGProfile {
+  userId         String    @id
+  user           User      @relation(fields: [userId], references: [id])
+  level          Int
+  totalXP        Int
+  currentXP      Int
+  xpForNextLevel Int
+  coins          Int
+  gems           Int
+  avatarClass    String
+  equippedWeapon String?
+  equippedArmor  String?
+  currentStreak  Int
+  longestStreak  Int
+  lastStudyDate  DateTime?
+}
+
+model UserStreak {
+  id       String   @id @default(cuid())
+  userId   String
+  dateKey  String
+  date     DateTime @default(now())
+  activity String
+
+  user     User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, dateKey])
+}
+
+//
+// RPG BADGES
+//
+model RevisionBadge {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  badgeName   String
+  badgeIcon   String
+  description String
+  rarity      String
+unlockedAt  DateTime @default(now())
+  
+  @@unique([userId, badgeName])
+}
+
+model PastPaper {
+  id           String    @id @default(cuid())
+  subjectId    String
+  examBoardId  String
+  title        String?
+  paperCode    String?
+  season       String?
+  overview     String?
+  year         Int
+  series       String    // e.g. "Summer", "November"
+  paperNumber  String    // e.g. "Paper 1", "1H"
+  tier         String?   // e.g. "Foundation", "Higher"
+  durationMinutes Int?
+  questionFocus String?
+  practicePrompt String?
+  markSchemeNotes String?
+  markSchemePoints String?
+  fileUrl      String    // PDF URL
+  markSchemeUrl String?  // optional PDF URL
+  createdAt    DateTime  @default(now())
+
+  subject   Subject   @relation(fields: [subjectId], references: [id])
+  examBoard ExamBoard @relation(fields: [examBoardId], references: [id])
+
+  @@index([subjectId])
+  @@index([examBoardId])
+}
+
+model ExamBoard {
+  id         String      @id @default(cuid())
+  name       String
+  slug       String      @unique
+  pastPapers PastPaper[]
+}
+
+//
+// USER SUBJECT SELECTION (with exam board choice)
+//
+model UserSubject {
+  id           String   @id @default(cuid())
+  userId       String
+  subjectId    String
+  examBoardId  String?  // Optional: user can specify preferred exam board
+  examBoardSlug String?  // Store slug for quick lookup
+  createdAt    DateTime @default(now())
+
+  user        User   @relation(fields: [userId], references: [id])
+  subject     Subject @relation(fields: [subjectId], references: [id])
+
+  @@unique([userId, subjectId]) // One subject per user, but can change exam board
+  @@index([userId])
+  @@index([subjectId])
+}
+
+//
+// QUESTIONS - Full answer questions with marks
+//
+model Question {
+  id              String   @id @default(cuid())
+  subjectId       String
+  topicId         String?  // Optional: can belong to a topic
+  prompt          String?
+  optionA         String?
+  optionB         String?
+  optionC         String?
+  optionD         String?
+  correctAnswer   String?
+  explanation     String?
+  questionText    String
+  marks           Int      // Total marks for the question (e.g., 3, 6, 9)
+  sampleAnswer    String   // For AI marking reference
+  markingCriteria String   // JSON string with marking breakdown
+  difficulty      Int      @default(1) // 1-5, 5 being hardest
+  examBoard       String?  // e.g. "AQA", "Edexcel"
+  year            Int?     // Year of question
+  createdAt       DateTime @default(now())
+
+  subject     Subject         @relation(fields: [subjectId], references: [id])
+  topic       Topic?          @relation(fields: [topicId], references: [id])
+  answers     QuestionAnswer[]
+  quizAttemptAnswers QuizAttemptAnswer[]
+
+  @@index([subjectId])
+  @@index([topicId])
+  @@index([examBoard])
+}
+
+model QuizAttemptAnswer {
+  id         String      @id @default(cuid())
+  attemptId  String
+  questionId String
+  selected   String
+  isCorrect  Boolean
+
+  attempt    QuizAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question   Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+}
+
+//
+// QUESTION ANSWERS - User's answers to questions for AI marking
+//
+model QuestionAnswer {
+  id               String   @id @default(cuid())
+  userId           String
+  questionId       String
+  userAnswer       String   // The student's full text answer
+  markedScore      Int?     // Score given by AI (0 to question.marks)
+  aiMarkingComment String?  // Why this score was given
+  confidence       Float?   // AI's confidence in the marking (0-1)
+  markedAt         DateTime?
+  createdAt        DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id])
+  question Question @relation(fields: [questionId], references: [id])
+
+  @@unique([userId, questionId]) // One answer per student per question
+  @@index([userId])
+  @@index([questionId])
+}
+
+//
+// TIMED QUESTIONS - User-uploaded questions from exam papers
+//
+model TimedQuestion {
+  id              String   @id @default(cuid())
+  createdBy       String   // User ID who uploaded
+  subjectId       String
+  questionText    String
+  marks           Int      // Total marks available
+  sampleAnswer    String?  // Optional: expected answer
+  markingCriteria String?  // JSON string with marking guidance
+  timePerMark     Int      @default(1) // 1 min per mark (adjustable)
+  examBoard       String?  // e.g. "AQA", "Edexcel"
+  year            Int?
+  paperNumber     String?  // e.g. "Paper 1"
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  subject         Subject         @relation(fields: [subjectId], references: [id])
+  timedAttempts   TimedAttempt[]
+
+  @@index([createdBy])
+  @@index([subjectId])
+}
+
+//
+// TIMED ATTEMPTS - Student attempts on timed questions
+//
+model TimedAttempt {
+  id               String   @id @default(cuid())
+  userId           String
+  timedQuestionId  String
+  userAnswer       String   // Student's answer
+  timeSpent        Int      // Time spent in seconds
+  allocatedTime    Int      // Allocated time in seconds (marks * 60)
+  markedScore      Int?     // Score given by AI (0 to marks)
+  aiMarkingComment String?  // Feedback on answer
+  confidence       Float?   // AI's confidence (0-1)
+  areasToImprove   String?  // JSON array of improvement areas
+  completedAt      DateTime @default(now())
+  markedAt         DateTime?
+
+  user            User           @relation(fields: [userId], references: [id])
+  timedQuestion   TimedQuestion  @relation(fields: [timedQuestionId], references: [id])
+
+  @@index([userId])
+  @@index([timedQuestionId])
+}
+
+//
+// USER SUBJECT PREDICTION - AI predicted grades for user's subjects
+//
+model UserSubjectPrediction {
+  id        String   @id @default(cuid())
+  userId    String
+  subjectId String
+  predictedGrade Int? // 1-9 GCSE grade
+  confidence Float?  // Confidence score 0-1
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, subjectId])
+  @@index([userId])
+  @@index([subjectId])
+}
+
+//
+// USER FOCUS AREA - Topics student needs to focus on
+//
+model UserFocusArea {
+  id        String   @id @default(cuid())
+  userId    String
+  topicId   String
+  subjectId String
+  reason    String?  // Why this area needs focus
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  topic   Topic   @relation(fields: [topicId], references: [id], onDelete: Cascade)
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([topicId])
+  @@index([subjectId])
+}
+
+//
+// USER XP - User's experience points and level
+//
+model UserXP {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  totalXP     Int      @default(0)
+  level       Int      @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Lesson {
+  id        String   @id @default(cuid())
+  topicId   String
+  title     String
+  content   String?
+  createdAt DateTime @default(now())
+
+  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+}
+
+model Subtopic {
+  id         String   @id @default(cuid())
+  topicId    String
+  title      String
+  summary    String?
+  orderIndex Int      @default(0)
+
+  topic Topic @relation(fields: [topicId], references: [id], onDelete: Cascade)
+}
+
+//
+// EXTEND SUBJECT MODEL with relations to questions
+//

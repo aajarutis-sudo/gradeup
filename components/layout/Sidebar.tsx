@@ -1,0 +1,46 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+const links = [
+  { href: "/dashboard", label: "Overview", hint: "Your main hub" },
+  { href: "/subjects", label: "Subjects", hint: "Browse every GCSE course" },
+  { href: "/chat", label: "AI Coach", hint: "Ask revision questions anytime" },
+  { href: "/continue", label: "Continue", hint: "Jump back in quickly" },
+  { href: "/schedule", label: "Schedule", hint: "Planned weekly sessions" },
+  { href: "/streak", label: "Streaks & XP", hint: "Track momentum" },
+];
+
+export default function Sidebar() {
+  const pathname = usePathname();
+
+  return (
+    <aside className="surface-card hidden w-72 rounded-[28px] p-4 xl:block">
+      <div className="mb-6">
+        <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[var(--primary)]">GradeUp</p>
+        <h2 className="mt-2 text-xl font-bold">Study toolkit</h2>
+        <p className="mt-2 text-sm text-muted">Everything you need to revise without the clutter.</p>
+      </div>
+      <div className="space-y-3">
+        {links.map((link) => {
+          const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`block rounded-3xl px-4 py-3 transition ${
+                active
+                  ? "bg-[var(--primary)] text-white"
+                  : "bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--background-elevated)]"
+              }`}
+            >
+              <p className="font-semibold">{link.label}</p>
+              <p className={`mt-1 text-sm ${active ? "text-white/85" : "text-muted"}`}>{link.hint}</p>
+            </Link>
+          );
+        })}
+      </div>
+    </aside>
+  );
+}
