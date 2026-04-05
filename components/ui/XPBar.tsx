@@ -1,16 +1,18 @@
 import ProgressBar from "@/components/ui/ProgressBar";
-import { calculateXpForLevel } from "@/lib/rpgSystem";
 
 export default function XPBar({
   xp,
   level,
+  currentXP,
+  xpForNextLevel,
 }: {
   xp: number;
   level: number;
+  currentXP?: number;
+  xpForNextLevel?: number;
 }) {
-  const previousThreshold = level <= 1 ? 0 : Array.from({ length: level - 1 }, (_, index) => calculateXpForLevel(index + 1)).reduce((sum, value) => sum + value, 0);
-  const nextThreshold = calculateXpForLevel(level);
-  const progress = Math.max(0, xp - previousThreshold);
+  const progress = currentXP ?? xp;
+  const nextThreshold = xpForNextLevel ?? 100;
 
   return (
     <div className="space-y-2">
@@ -20,7 +22,7 @@ export default function XPBar({
       </div>
       <ProgressBar value={Math.min(100, Math.round((progress / nextThreshold) * 100))} />
       <p className="text-sm text-muted">
-        {progress}/{nextThreshold} XP to the next level.
+        {progress}/{nextThreshold} XP toward Level {level + 1}.
       </p>
     </div>
   );

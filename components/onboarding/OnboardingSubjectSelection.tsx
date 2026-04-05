@@ -94,7 +94,7 @@ export default function OnboardingSubjectSelection({ subjects }: OnboardingSubje
 
   return (
     <div className="space-y-6">
-      <div className="grid gap-4 rounded-[28px] bg-[var(--background)] p-5 lg:grid-cols-[1.1fr_0.9fr]">
+      <div className="space-y-4 rounded-[28px] bg-[var(--background)] p-5">
         <div className="space-y-2">
           <label htmlFor="subject-search" className="text-sm font-semibold">
             Search subjects

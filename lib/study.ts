@@ -19,9 +19,7 @@ export function buildWeeklySchedule(
     }
   >
 ) {
-  const weekdayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const today = new Date();
-  const todayIndex = (today.getDay() + 6) % 7;
 
   return topics
     .sort((a, b) => {
@@ -31,15 +29,15 @@ export function buildWeeklySchedule(
     })
     .slice(0, 14)
     .map((topic, index) => {
-      const dayIndex = index % weekdayLabels.length;
-      const offset = (dayIndex - todayIndex + 7) % 7;
       const calendarDate = new Date(today);
-      calendarDate.setDate(today.getDate() + offset + (index >= weekdayLabels.length ? 7 : 0));
+      calendarDate.setDate(today.getDate() + index);
+      const dayIndex = (calendarDate.getDay() + 6) % 7;
+      const weekdayLabels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
       return {
         dayIndex,
         dayLabel: weekdayLabels[dayIndex],
-        isToday: dayIndex === todayIndex && index < weekdayLabels.length,
+        isToday: index === 0,
         dateLabel: calendarDate.toLocaleDateString("en-GB", { day: "numeric", month: "short" }),
         topic,
         focusMinutes: Math.min(35, Math.max(20, topic.estimatedMins - 5 + ((index % 3) * 5))),

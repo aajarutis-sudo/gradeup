@@ -39,6 +39,7 @@ export default async function SchedulePage() {
   ]);
 
   const schedule = buildWeeklySchedule(topics);
+  const visibleSchedule = schedule.length >= 8 ? schedule.slice(0, Math.floor(schedule.length / 4) * 4) : schedule;
   const streak = getStreakLength(streakEntries.map((entry) => entry.dateKey));
   const aiSubjects = predictions.map((prediction) => ({
     slug: prediction.topic.subject.slug,
@@ -67,7 +68,7 @@ export default async function SchedulePage() {
 
         <Card title="Suggested spaced schedule" subtitle="A built-in fallback plan so you always have a calm, doable week to follow.">
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-            {schedule.map((slot, index) => (
+            {visibleSchedule.map((slot, index) => (
               <div
                 key={`${slot.dayLabel}-${slot.topic.id}`}
                 className={`glass-panel rounded-[24px] p-4 animate-fade-up stagger-${(index % 4) + 1} ${slot.isToday ? "border border-[var(--primary)] ring-2 ring-[var(--primary)]/30" : ""}`}

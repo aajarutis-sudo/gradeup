@@ -158,7 +158,12 @@ export default async function DashboardPage() {
               <StreakCounter streak={streakLength} />
             </div>
             <Card title="XP bar">
-              <XPBar xp={xp?.totalXP ?? 0} level={xp?.level ?? 1} />
+              <XPBar
+                xp={xp?.totalXP ?? 0}
+                level={xp?.level ?? 1}
+                currentXP={xp?.currentXP ?? 0}
+                xpForNextLevel={xp?.xpForNextLevel ?? 100}
+              />
             </Card>
           </div>
         </div>
