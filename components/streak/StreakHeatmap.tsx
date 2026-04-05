@@ -21,11 +21,18 @@ export default function StreakHeatmap({
   });
 
   return (
-    <div className="grid grid-cols-7 gap-3">
-      {recentDays.map((day) => (
-        <div key={day.key} className="space-y-2 text-center">
-          <p className="text-xs font-medium text-muted">{day.day}</p>
+    <div className="space-y-3">
+      <div className="grid grid-cols-7 gap-3">
+        {weekdayNames.map((day) => (
+          <p key={day} className="text-center text-xs font-medium text-muted">
+            {day}
+          </p>
+        ))}
+      </div>
+      <div className="grid grid-cols-7 gap-3">
+        {recentDays.map((day) => (
           <div
+            key={day.key}
             className={`h-12 rounded-2xl border ${day.isToday ? "ring-2 ring-[var(--primary)]/50" : ""}`}
             style={{
               background: day.active ? "var(--accent)" : "var(--surface-strong)",
@@ -34,8 +41,8 @@ export default function StreakHeatmap({
             }}
             title={day.key}
           />
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }

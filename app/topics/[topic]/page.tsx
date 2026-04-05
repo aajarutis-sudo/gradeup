@@ -7,6 +7,7 @@ import MainLayout from "@/components/layout/MainLayout";
 import Card from "@/components/cards/Card";
 import SectionHeading from "@/components/ui/SectionHeading";
 import ProgressBar from "@/components/ui/ProgressBar";
+import SimpleMarkdown from "@/components/ui/SimpleMarkdown";
 
 export default async function TopicPage({
   params,
@@ -128,9 +129,10 @@ export default async function TopicPage({
             {topic.lessons.map((lesson) => (
               <article key={lesson.id} className="rounded-[24px] bg-[var(--background)] p-5">
                 <h2 className="text-xl font-bold">{lesson.title}</h2>
-                <div className="mt-3 whitespace-pre-wrap text-sm leading-7 text-muted">
-                  {lesson.content ?? "Lesson content coming soon."}
-                </div>
+                <SimpleMarkdown
+                  content={lesson.content ?? "Lesson content coming soon."}
+                  className="mt-3"
+                />
               </article>
             ))}
           </div>

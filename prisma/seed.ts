@@ -631,37 +631,82 @@ ${topic.summary}
 }
 
 function createQuestions(subject: SubjectBlueprint, topic: TopicBlueprint) {
+  const expandedSubtopics = buildExpandedSubtopics(subject, topic);
+  const primarySubtopic = expandedSubtopics[0] ?? topic.title.toLowerCase();
+  const secondarySubtopic = expandedSubtopics[1] ?? "core terminology";
+  const tertiarySubtopic = expandedSubtopics[2] ?? "application";
+
   return [
     {
-      prompt: `Which statement best matches ${topic.title}?`,
+      prompt: `Which revision focus best matches ${topic.title}?`,
       optionA: topic.summary,
-      optionB: `It is not really part of ${subject.title}.`,
-      optionC: "It only matters if you memorise isolated facts without understanding them.",
-      optionD: "It should be ignored until the night before the exam.",
+      optionB: `A broad overview of ${subject.title} without specific reference to ${topic.title}.`,
+      optionC: `A narrow focus on ${secondarySubtopic} only, without linking it back to the whole unit.`,
+      optionD: `A summary that focuses mostly on exam timing rather than the content of ${topic.title}.`,
       correctAnswer: topic.summary,
       explanation: `A strong revision answer identifies the central purpose of ${topic.title}.`,
-      questionText: `Which statement best matches ${topic.title}?`,
+      questionText: `Which revision focus best matches ${topic.title}?`,
       marks: 2,
       sampleAnswer: topic.summary,
       markingCriteria: JSON.stringify({ identification: 1, subject_accuracy: 1 }),
     },
     {
-      prompt: `What is the best first revision move for ${topic.title}?`,
-      optionA: "Copy notes out without checking what you already know.",
+      prompt: `What is the strongest first revision move for ${topic.title}?`,
+      optionA: `Read the unit once, then move straight on without checking ${primarySubtopic}.`,
       optionB: `Break ${topic.title} into smaller parts, retrieve what you remember, then apply it to an exam-style question.`,
-      optionC: "Skip examples and go straight to guessing answers.",
-      optionD: "Only learn definitions and ignore application.",
+      optionC: `Memorise one definition from ${secondarySubtopic} and assume the rest will follow.`,
+      optionD: `Revise only the easiest example from ${tertiarySubtopic} and leave the wider topic for later.`,
       correctAnswer: `Break ${topic.title} into smaller parts, retrieve what you remember, then apply it to an exam-style question.`,
       explanation: "The best revision combines recall with application rather than passive copying.",
-      questionText: `What is the best first revision move for ${topic.title}?`,
+      questionText: `What is the strongest first revision move for ${topic.title}?`,
       marks: 3,
       sampleAnswer: `Break ${topic.title} into smaller parts, retrieve what you remember, then apply it to an exam-style question.`,
       markingCriteria: JSON.stringify({ method: 1, application: 1, reasoning: 1 }),
+    },
+    {
+      prompt: `Which subtopic is most closely linked to ${topic.title}?`,
+      optionA: primarySubtopic,
+      optionB: `${subject.title.toLowerCase()} as a whole`,
+      optionC: `A different unit from ${subject.title}`,
+      optionD: "General exam confidence only",
+      correctAnswer: primarySubtopic,
+      explanation: `${primarySubtopic} is one of the core building blocks inside ${topic.title}.`,
+      questionText: `Which subtopic is most closely linked to ${topic.title}?`,
+      marks: 2,
+      sampleAnswer: primarySubtopic,
+      markingCriteria: JSON.stringify({ retrieval: 1, topic_link: 1 }),
+    },
+    {
+      prompt: `A student is revising ${topic.title}. Which approach is most effective?`,
+      optionA: `Use ${primarySubtopic}, ${secondarySubtopic}, and exam questions together in short focused blocks.`,
+      optionB: `Spend the whole session rewriting the title of ${topic.title} until it feels familiar.`,
+      optionC: `Revise only one sentence from the summary and avoid examples.`,
+      optionD: `Skip application until the final week before the exam.`,
+      correctAnswer: `Use ${primarySubtopic}, ${secondarySubtopic}, and exam questions together in short focused blocks.`,
+      explanation: "Combining content knowledge with retrieval and application produces stronger long-term revision.",
+      questionText: `A student is revising ${topic.title}. Which approach is most effective?`,
+      marks: 3,
+      sampleAnswer: `Use ${primarySubtopic}, ${secondarySubtopic}, and exam questions together in short focused blocks.`,
+      markingCriteria: JSON.stringify({ planning: 1, retrieval: 1, application: 1 }),
+    },
+    {
+      prompt: `Why should ${topic.title} be revised through smaller linked chunks instead of one huge block?`,
+      optionA: `Because linking ${primarySubtopic}, ${secondarySubtopic}, and ${tertiarySubtopic} helps understanding and recall stick.`,
+      optionB: "Because it removes the need to answer exam questions later on.",
+      optionC: "Because revision is only useful when it feels easy and repetitive.",
+      optionD: "Because the exam board expects students to memorise isolated facts with no connections.",
+      correctAnswer: `Because linking ${primarySubtopic}, ${secondarySubtopic}, and ${tertiarySubtopic} helps understanding and recall stick.`,
+      explanation: "Students remember and apply topics better when they connect related ideas rather than treating them as isolated facts.",
+      questionText: `Why should ${topic.title} be revised through smaller linked chunks instead of one huge block?`,
+      marks: 4,
+      sampleAnswer: `Because linking ${primarySubtopic}, ${secondarySubtopic}, and ${tertiarySubtopic} helps understanding and recall stick.`,
+      markingCriteria: JSON.stringify({ understanding: 1, recall: 1, application: 1, reasoning: 1 }),
     },
   ];
 }
 
 function createFlashcards(subject: SubjectBlueprint, topic: TopicBlueprint) {
+  const expandedSubtopics = buildExpandedSubtopics(subject, topic);
   return [
     {
       question: `What is the main focus of ${topic.title}?`,
@@ -670,6 +715,38 @@ function createFlashcards(subject: SubjectBlueprint, topic: TopicBlueprint) {
     {
       question: `Which exam board is this unit aligned to?`,
       answer: `${subject.examBoard} ${subject.title}`,
+    },
+    {
+      question: `Name one key subtopic inside ${topic.title}.`,
+      answer: expandedSubtopics[0] ?? topic.subtopics[0] ?? topic.title,
+    },
+    {
+      question: `Which subtopic would you revise after ${expandedSubtopics[0] ?? "the first key idea"}?`,
+      answer: expandedSubtopics[1] ?? topic.subtopics[1] ?? expandedSubtopics[0] ?? topic.title,
+    },
+    {
+      question: `What is another useful angle to revise in ${topic.title}?`,
+      answer: expandedSubtopics[2] ?? topic.subtopics[2] ?? expandedSubtopics[1] ?? topic.title,
+    },
+    {
+      question: `How should you split revision for ${topic.title} into smaller chunks?`,
+      answer: `Work through ${expandedSubtopics.slice(0, 3).join(", ")}, then finish with an exam-style question.`,
+    },
+    {
+      question: `What kind of exam thinking does ${topic.title} usually need?`,
+      answer: `Use precise terminology, link ideas clearly, and apply ${topic.title} to exam-style questions rather than just copying notes.`,
+    },
+    {
+      question: `What is one common mistake when revising ${topic.title}?`,
+      answer: `Treating ${topic.title} as one big block instead of breaking it into linked subtopics and applying it in questions.`,
+    },
+    {
+      question: `What should you do after revising the content in ${topic.title}?`,
+      answer: `Test yourself with retrieval and exam questions so the knowledge becomes usable, not just familiar.`,
+    },
+    {
+      question: `What does success look like in ${topic.title}?`,
+      answer: `You can explain the main idea, connect the subtopics, and use them accurately in an exam answer.`,
     },
   ];
 }
