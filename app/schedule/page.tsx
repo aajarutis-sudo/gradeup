@@ -66,34 +66,33 @@ export default async function SchedulePage() {
         </Card>
 
         <Card title="Suggested spaced schedule" subtitle="A built-in fallback plan so you always have a calm, doable week to follow.">
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
             {schedule.map((slot, index) => (
               <div
                 key={`${slot.dayLabel}-${slot.topic.id}`}
-                className={`glass-panel rounded-[28px] p-5 animate-fade-up stagger-${(index % 4) + 1} ${slot.isToday ? "ring-2 ring-[var(--primary)]" : ""}`}
+                className={`glass-panel rounded-[24px] p-4 animate-fade-up stagger-${(index % 4) + 1} ${slot.isToday ? "border border-[var(--primary)] ring-2 ring-[var(--primary)]/30" : ""}`}
               >
                 <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--accent)]">
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--accent)]">
                     {slot.dayLabel} · {slot.dateLabel}
                   </p>
                   {slot.isToday ? (
-                    <span className="rounded-full bg-[var(--primary)] px-3 py-1 text-xs font-semibold text-white">
+                    <span className="rounded-full bg-[var(--primary)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-white">
                       Today
                     </span>
                   ) : null}
                 </div>
-                <h2 className="mt-3 text-xl font-semibold">{slot.topic.title}</h2>
-                <p className="mt-2 text-sm text-muted">{slot.topic.subject.name ?? slot.topic.subject.title}</p>
-                <p className="mt-4 text-sm text-muted">{slot.sessionLabel}</p>
-                <p className="mt-1 text-sm text-muted">Focus block: {slot.focusMinutes} minutes</p>
-                <p className="mt-1 text-sm text-muted">Break after session: {slot.breakMinutes} minutes</p>
-                <p className="mt-1 text-sm text-muted">
+                <h2 className="mt-2 text-lg font-semibold leading-6">{slot.topic.title}</h2>
+                <p className="mt-1 text-sm text-muted">{slot.topic.subject.name ?? slot.topic.subject.title}</p>
+                <div className="mt-3 space-y-1.5 text-xs text-muted">
+                  <p>{slot.sessionLabel}</p>
+                  <p>Focus block: {slot.focusMinutes} minutes</p>
+                  <p>Break after session: {slot.breakMinutes} minutes</p>
+                  <p>
                   Current progress: {slot.topic.progress?.[0]?.completed ?? 0}%
-                </p>
-                <div className="mt-4 flex items-center justify-between gap-3">
-                  <span className="text-xs uppercase tracking-[0.16em] text-muted">
-                    {slot.topic.progress?.[0]?.completed ? "In progress" : "Not started"}
-                  </span>
+                  </p>
+                </div>
+                <div className="mt-3 flex items-center justify-end gap-3">
                   <Link href={`/topics/${slot.topic.slug}`} className="text-sm font-semibold text-[var(--primary)]">
                     Open topic →
                   </Link>

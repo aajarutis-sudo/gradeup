@@ -77,6 +77,17 @@ export default async function PlansPage() {
               <div className="mt-6 rounded-[24px] bg-[color-mix(in_srgb,var(--primary)_8%,transparent)] p-4 text-sm text-muted">
                 Price not final yet. The goal is to keep the core revision layer strong and only charge for the expensive AI features.
               </div>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link
+                  href={userId ? "/support" : "/sign-in?redirect_url=/support"}
+                  className="inline-flex rounded-full bg-[var(--primary)] px-5 py-3 text-sm font-semibold text-white"
+                >
+                  Notify me
+                </Link>
+                <Link href="/mission" className="inline-flex rounded-full bg-[var(--background)] px-5 py-3 text-sm font-semibold">
+                  Why Plus exists
+                </Link>
+              </div>
             </Card>
           </div>
 

@@ -40,7 +40,12 @@ export default async function ContinuePage() {
               <p className="mt-2 text-sm text-muted">Saved progress: {latest.completed}% complete</p>
             </Link>
           ) : (
-            <p className="text-muted">No progress yet. Start with any subject and your latest topic will appear here.</p>
+            <div className="space-y-4">
+              <p className="text-muted">No progress yet. Start with any subject and your latest topic will appear here.</p>
+              <Link href="/subjects" className="inline-flex rounded-full bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white">
+                Open subjects
+              </Link>
+            </div>
           )}
         </Card>
       </div>

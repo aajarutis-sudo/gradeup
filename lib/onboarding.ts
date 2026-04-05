@@ -301,6 +301,10 @@ export async function saveDiagnosticResult({
   const predictedGrade =
     correctCount <= 2 ? 3 : correctCount <= 4 ? 5 : correctCount <= 6 ? 7 : 9;
 
+  const existingPredictions = await prisma.userSubjectPrediction.count({
+    where: { userId },
+  });
+
   // Create/update weakness prediction for the subject
   for (const topic of topics.slice(0, 3)) {
     await prisma.weaknessPrediction.upsert({
@@ -355,7 +359,8 @@ export async function saveDiagnosticResult({
   });
 
   // Award XP and handle level ups
-  const xpEarned = answers.length * 10;
+  const onboardingBonus = existingPredictions === 0 ? 40 : 0;
+  const xpEarned = answers.length * 10 + onboardingBonus;
   const rpg = await addXP(userId, xpEarned);
 
   // Award badge for first quiz

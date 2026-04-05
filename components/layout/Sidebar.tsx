@@ -21,7 +21,7 @@ export default function Sidebar() {
       <div className="mb-6">
         <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[var(--primary)]">GradeUp</p>
         <h2 className="mt-2 text-xl font-bold">Your revision hub</h2>
-        <p className="mt-2 text-sm text-muted">Subjects, practice, and next steps in one calmer workspace.</p>
+        <p className="mt-2 text-sm text-muted">Everything you need to revise without the clutter.</p>
       </div>
       <div className="space-y-3">
         {links.map((link) => {
