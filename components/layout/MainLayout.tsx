@@ -11,7 +11,9 @@ export default function MainLayout({
   return (
     <div className="page-shell">
       <Container className="space-y-6">
-        <Header />
+        <div className="xl:hidden">
+          <Header />
+        </div>
         <div className="flex items-start gap-6">
           <Sidebar />
           <main className="min-w-0 flex-1">{children}</main>

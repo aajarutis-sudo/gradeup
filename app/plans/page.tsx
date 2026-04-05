@@ -25,6 +25,16 @@ const plusFeatures = [
 
 export default async function PlansPage() {
   const { userId } = await auth();
+  const comparisonRows = [
+    { label: "Subjects and ordered units", free: true, plus: true },
+    { label: "Core quizzes and flashcards", free: true, plus: true },
+    { label: "Revision timetable tools", free: true, plus: true },
+    { label: "Past paper browsing", free: true, plus: true },
+    { label: "AI Coach chat", free: false, plus: true },
+    { label: "AI-generated notes", free: false, plus: true },
+    { label: "AI practice question generation", free: false, plus: true },
+    { label: "Deeper personalised AI support", free: false, plus: true },
+  ];
 
   return (
     <div className="min-h-screen">
@@ -55,8 +65,8 @@ export default async function PlansPage() {
 
             <Card className="rounded-[32px] border-2 border-[var(--primary)]">
               <Badge>GradeUp Plus</Badge>
-              <h2 className="mt-3 text-3xl font-extrabold">Your paid layer</h2>
-              <p className="mt-3 text-sm text-muted">Use this tier for the features you do not want to hand out widely.</p>
+              <h2 className="mt-3 text-3xl font-extrabold">Coming soon</h2>
+              <p className="mt-3 text-sm text-muted">Planned as the paid layer for students who want the heavier AI tools on top of the free revision core.</p>
               <div className="mt-6 space-y-3">
                 {plusFeatures.map((feature) => (
                   <div key={feature} className="rounded-[22px] bg-[var(--background)] p-4 text-sm">
@@ -65,10 +75,31 @@ export default async function PlansPage() {
                 ))}
               </div>
               <div className="mt-6 rounded-[24px] bg-[color-mix(in_srgb,var(--primary)_8%,transparent)] p-4 text-sm text-muted">
-                For now, you can manually control Plus access through env allowlists while you decide on Stripe or another payment flow later.
+                Price not final yet. The goal is to keep the core revision layer strong and only charge for the expensive AI features.
               </div>
             </Card>
           </div>
+
+          <Card className="rounded-[32px]">
+            <Badge>Compare plans</Badge>
+            <div className="mt-4 overflow-hidden rounded-[24px] border border-[var(--border)]">
+              <div className="grid grid-cols-[1.3fr_0.6fr_0.6fr] bg-[var(--background-elevated)] px-5 py-4 text-sm font-semibold">
+                <div>Feature</div>
+                <div className="text-center">Free</div>
+                <div className="text-center">Plus</div>
+              </div>
+              {comparisonRows.map((row, index) => (
+                <div
+                  key={row.label}
+                  className={`grid grid-cols-[1.3fr_0.6fr_0.6fr] px-5 py-4 text-sm ${index % 2 === 0 ? "bg-[var(--background)]" : "bg-[var(--background-elevated)]/60"}`}
+                >
+                  <div>{row.label}</div>
+                  <div className="text-center font-semibold">{row.free ? "Yes" : "No"}</div>
+                  <div className="text-center font-semibold">{row.plus ? "Yes" : "No"}</div>
+                </div>
+              ))}
+            </div>
+          </Card>
 
           <div className="flex flex-wrap gap-4">
             <Link

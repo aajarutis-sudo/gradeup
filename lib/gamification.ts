@@ -28,8 +28,8 @@ export function levelFromXP(totalXP: number): number {
     let level = 1;
     let xpNeeded = 0;
 
-    while (xpNeeded + Math.floor(1000 * Math.pow(1.1, level - 1)) <= totalXP) {
-        xpNeeded += Math.floor(1000 * Math.pow(1.1, level - 1));
+    while (xpNeeded + Math.floor(100 * Math.pow(1.5, level - 1)) <= totalXP) {
+        xpNeeded += Math.floor(100 * Math.pow(1.5, level - 1));
         level++;
     }
 
@@ -51,7 +51,7 @@ export async function addXP(userId: string, xpAmount: number) {
             level: 1,
             totalXP: xpAmount,
             currentXP: xpAmount,
-            xpForNextLevel: 1000,
+            xpForNextLevel: 100,
             coins: 0,
             gems: 0,
             avatarClass: 'Scholar',

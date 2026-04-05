@@ -28,7 +28,7 @@ export default async function ContinuePage() {
     <MainLayout>
       <div className="space-y-6">
         <SectionHeading
-          eyebrow="Continue"
+          eyebrow="Resume"
           title="Pick up exactly where you stopped"
           description="Your most recent topic is surfaced here so you can get back into flow quickly."
         />

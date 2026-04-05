@@ -1,5 +1,6 @@
 import { auth, currentUser } from "@clerk/nextjs/server";
 import prisma from "@/lib/prisma";
+import { calculateXpForLevel } from "@/lib/rpgSystem";
 
 export async function getViewer() {
   const { userId } = await auth();
@@ -40,7 +41,7 @@ export async function getViewer() {
         level: 1,
         totalXP: 0,
         currentXP: 0,
-        xpForNextLevel: 500,
+        xpForNextLevel: calculateXpForLevel(1),
         coins: 0,
         gems: 0,
         avatarClass: "Student",

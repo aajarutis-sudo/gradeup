@@ -6,6 +6,7 @@ import MainLayout from "@/components/layout/MainLayout";
 import SectionHeading from "@/components/ui/SectionHeading";
 import Card from "@/components/cards/Card";
 import RevisionTimetableGenerator from "@/components/dashboard/RevisionTimetableGenerator";
+import Link from "next/link";
 
 export default async function SchedulePage() {
   const viewer = await getViewer();
@@ -67,8 +68,20 @@ export default async function SchedulePage() {
         <Card title="Suggested spaced schedule" subtitle="A built-in fallback plan so you always have a calm, doable week to follow.">
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             {schedule.map((slot, index) => (
-              <div key={`${slot.dayLabel}-${slot.topic.id}`} className={`glass-panel rounded-[28px] p-5 animate-fade-up stagger-${(index % 4) + 1}`}>
-                <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--accent)]">{slot.dayLabel}</p>
+              <div
+                key={`${slot.dayLabel}-${slot.topic.id}`}
+                className={`glass-panel rounded-[28px] p-5 animate-fade-up stagger-${(index % 4) + 1} ${slot.isToday ? "ring-2 ring-[var(--primary)]" : ""}`}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--accent)]">
+                    {slot.dayLabel} · {slot.dateLabel}
+                  </p>
+                  {slot.isToday ? (
+                    <span className="rounded-full bg-[var(--primary)] px-3 py-1 text-xs font-semibold text-white">
+                      Today
+                    </span>
+                  ) : null}
+                </div>
                 <h2 className="mt-3 text-xl font-semibold">{slot.topic.title}</h2>
                 <p className="mt-2 text-sm text-muted">{slot.topic.subject.name ?? slot.topic.subject.title}</p>
                 <p className="mt-4 text-sm text-muted">{slot.sessionLabel}</p>
@@ -77,6 +90,14 @@ export default async function SchedulePage() {
                 <p className="mt-1 text-sm text-muted">
                   Current progress: {slot.topic.progress?.[0]?.completed ?? 0}%
                 </p>
+                <div className="mt-4 flex items-center justify-between gap-3">
+                  <span className="text-xs uppercase tracking-[0.16em] text-muted">
+                    {slot.topic.progress?.[0]?.completed ? "In progress" : "Not started"}
+                  </span>
+                  <Link href={`/topics/${slot.topic.slug}`} className="text-sm font-semibold text-[var(--primary)]">
+                    Open topic →
+                  </Link>
+                </div>
               </div>
             ))}
           </div>

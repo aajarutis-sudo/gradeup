@@ -7,7 +7,7 @@ const links = [
   { href: "/dashboard", label: "Overview", hint: "Your main hub" },
   { href: "/subjects", label: "Subjects", hint: "Browse every GCSE course" },
   { href: "/chat", label: "AI Coach", hint: "Premium AI study help" },
-  { href: "/continue", label: "Continue", hint: "Jump back in quickly" },
+  { href: "/continue", label: "Resume", hint: "Jump back in quickly" },
   { href: "/schedule", label: "Schedule", hint: "Planned weekly sessions" },
   { href: "/streak", label: "Streaks & XP", hint: "Track momentum" },
   { href: "/plans", label: "Plans", hint: "Free vs Plus access" },
@@ -20,8 +20,8 @@ export default function Sidebar() {
     <aside className="surface-card hidden w-72 rounded-[28px] p-4 xl:block">
       <div className="mb-6">
         <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[var(--primary)]">GradeUp</p>
-        <h2 className="mt-2 text-xl font-bold">Study toolkit</h2>
-        <p className="mt-2 text-sm text-muted">Everything you need to revise without the clutter.</p>
+        <h2 className="mt-2 text-xl font-bold">Your revision hub</h2>
+        <p className="mt-2 text-sm text-muted">Subjects, practice, and next steps in one calmer workspace.</p>
       </div>
       <div className="space-y-3">
         {links.map((link) => {

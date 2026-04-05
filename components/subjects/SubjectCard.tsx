@@ -21,7 +21,7 @@ export default function SubjectCard({
   return (
     <Link
       href={`/subjects/${slug}`}
-      className="glass-panel animate-fade-up group rounded-[30px] p-5 transition hover:-translate-y-1"
+      className="glass-panel animate-fade-up group rounded-[30px] p-5 transition hover:-translate-y-1 hover:shadow-xl"
     >
       <div
         className="mb-5 h-20 rounded-[22px]"
@@ -43,6 +43,12 @@ export default function SubjectCard({
           </span>
         </div>
         <ProgressBar value={completion} label="Overall completion" />
+        <div className="flex items-center justify-between pt-1 text-sm">
+          <span className="text-muted">{completion > 0 ? "Keep moving" : "Ready to start"}</span>
+          <span className="font-semibold text-[var(--primary)] opacity-0 transition group-hover:opacity-100">
+            Start revising →
+          </span>
+        </div>
       </div>
     </Link>
   );

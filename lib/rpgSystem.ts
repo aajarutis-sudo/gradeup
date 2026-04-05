@@ -153,14 +153,14 @@ export const BADGES = {
 
 /**
  * Calculate XP required for next level
- * Formula: 1000 * (1.1 ^ (level - 1))
- * Level 1: 1000 XP
- * Level 2: 1100 XP
- * Level 3: 1210 XP
+ * Formula: 100 * (1.5 ^ (level - 1))
+ * Level 1: 100 XP
+ * Level 2: 150 XP
+ * Level 3: 225 XP
  * etc.
  */
 export function calculateXpForLevel(level: number): number {
-    return Math.floor(1000 * Math.pow(1.1, level - 1));
+    return Math.floor(100 * Math.pow(1.5, level - 1));
 }
 
 /**

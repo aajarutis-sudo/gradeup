@@ -41,8 +41,8 @@ export default async function StreakPage() {
               </div>
             </div>
           </Card>
-          <Card title="Recent activity heatmap" subtitle="The last 21 days at a glance.">
-            <StreakHeatmap dateKeys={streakEntries.map((entry) => entry.dateKey)} />
+          <Card title="Recent activity heatmap" subtitle="The last 8 weeks at a glance, with today highlighted.">
+            <StreakHeatmap dateKeys={streakEntries.map((entry) => entry.dateKey)} days={56} />
           </Card>
         </div>
       </div>

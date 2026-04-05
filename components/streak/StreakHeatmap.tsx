@@ -2,17 +2,21 @@ const weekdayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 export default function StreakHeatmap({
   dateKeys,
+  days = 56,
 }: {
   dateKeys: string[];
+  days?: number;
 }) {
-  const recentDays = Array.from({ length: 21 }, (_, index) => {
+  const recentDays = Array.from({ length: days }, (_, index) => {
     const date = new Date();
-    date.setUTCDate(date.getUTCDate() - (20 - index));
+    date.setUTCDate(date.getUTCDate() - ((days - 1) - index));
     const key = date.toISOString().slice(0, 10);
+    const todayKey = new Date().toISOString().slice(0, 10);
     return {
       key,
       day: weekdayNames[(date.getUTCDay() + 6) % 7],
       active: dateKeys.includes(key),
+      isToday: key === todayKey,
     };
   });
 
@@ -22,7 +26,7 @@ export default function StreakHeatmap({
         <div key={day.key} className="space-y-2 text-center">
           <p className="text-xs font-medium text-muted">{day.day}</p>
           <div
-            className="h-12 rounded-2xl border"
+            className={`h-12 rounded-2xl border ${day.isToday ? "ring-2 ring-[var(--primary)]/50" : ""}`}
             style={{
               background: day.active ? "var(--accent)" : "var(--surface-strong)",
               borderColor: "var(--border)",

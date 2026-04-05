@@ -10,25 +10,43 @@ import PageTitle from "@/components/ui/PageTitle";
 import SubTitle from "@/components/ui/SubTitle";
 import Badge from "@/components/ui/Badge";
 
-const testimonials = [
-  { name: "Aisha", quote: "It helped me stop guessing what to revise and just get on with it." },
-  { name: "Leo", quote: "The quiz feedback felt clear and calm. Way less overwhelming." },
-  { name: "Maya", quote: "The dashboard made it obvious what I should do next." },
-];
-
 const features = [
-  "Diagnostic quiz",
-  "Predicted grade engine",
-  "Personalised revision plan",
-  "Flashcards",
-  "Quizzes",
-  "Streaks, XP, and levels",
+  {
+    title: "Diagnostic quiz",
+    description: "Start with a quick baseline so students stop guessing and see where to focus first.",
+  },
+  {
+    title: "Predicted grade engine",
+    description: "Turn early quiz performance into a rough GCSE grade picture with clear next steps.",
+  },
+  {
+    title: "Personalised revision plan",
+    description: "Build a realistic timetable around weak topics instead of dumping every unit into one list.",
+  },
+  {
+    title: "Flashcards",
+    description: "Revise key facts, vocabulary, quotes, and methods in small chunks that feel manageable.",
+  },
+  {
+    title: "Quizzes",
+    description: "Practice topic by topic with structured questions, progress tracking, and clearer feedback.",
+  },
+  {
+    title: "Streaks, XP, and levels",
+    description: "Keep momentum up with simple progression that makes revision feel steady instead of punishing.",
+  },
 ];
 
 const productValues = [
   "Free users still get strong revision tools from day one.",
   "Plus is reserved for the expensive AI layer: chat, notes, and extra practice.",
   "Built to feel calm, focused, and genuinely useful when exams are close.",
+];
+
+const trustSignals = [
+  "Board-specific subjects and ordered units instead of one generic course list.",
+  "Free tools stay useful on their own, so students can revise before they ever upgrade.",
+  "Designed to feel calmer than a giant homework portal when exams are getting close.",
 ];
 
 export default async function HomePage() {
@@ -48,29 +66,31 @@ export default async function HomePage() {
         <Container className="py-20">
           <section className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <div className="space-y-6 animate-fade-up">
-              <Badge>Education for everyone</Badge>
-              <PageTitle>GCSE revision that feels premium without being chaotic</PageTitle>
+              <Badge>Built for exam-board-specific GCSE revision</Badge>
+              <PageTitle>Know what to revise next, not just where your notes are</PageTitle>
               <SubTitle>
-                Core revision stays generous and easy to access. Upgrade only when you want the heavier AI tools like live tutoring, AI notes, and extra practice generation.
+                GradeUp turns subjects into ordered units, topic notes, quizzes, flashcards, and revision plans that match the board students actually sit. Free stays strong. Plus unlocks the heavier AI layer.
               </SubTitle>
               <div className="flex flex-wrap gap-4">
                 <Link href="/sign-in?redirect_url=/onboarding" className="inline-flex rounded-full bg-[var(--primary)] px-6 py-3 text-sm font-semibold text-white">
-                  Get Started
+                  Start Revising
                 </Link>
-                <Link href="/#features" className="inline-flex rounded-full border border-[var(--border)] bg-[var(--background-elevated)] px-6 py-3 text-sm font-semibold">
-                  Explore Features
-                </Link>
-                <Link href="/plans" className="inline-flex rounded-full border border-[var(--border)] bg-[var(--background-elevated)] px-6 py-3 text-sm font-semibold">
-                  See Plans
-                </Link>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-3">
+                {trustSignals.map((signal) => (
+                  <div key={signal} className="rounded-3xl bg-[var(--background-elevated)] px-4 py-4 text-sm text-muted">
+                    {signal}
+                  </div>
+                ))}
               </div>
             </div>
             <div className="grid gap-4 animate-fade-up stagger-2">
               <Card className="rounded-[36px]">
                 <div className="grid gap-4 sm:grid-cols-2">
                   {features.map((feature) => (
-                    <div key={feature} className="rounded-3xl bg-[var(--background)] p-4">
-                      <p className="font-semibold">{feature}</p>
+                    <div key={feature.title} className="rounded-3xl bg-[var(--background)] p-4">
+                      <p className="font-semibold">{feature.title}</p>
+                      <p className="mt-2 text-sm text-muted">{feature.description}</p>
                     </div>
                   ))}
                 </div>
@@ -95,9 +115,9 @@ export default async function HomePage() {
             </div>
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {features.map((feature, index) => (
-                <Card key={feature} className={`stagger-${(index % 4) + 1}`}>
-                  <p className="text-lg font-bold">{feature}</p>
-                  <p className="mt-2 text-sm text-muted">Clear guidance, focused practice, and progress that feels motivating.</p>
+                <Card key={feature.title} className={`stagger-${(index % 4) + 1}`}>
+                  <p className="text-lg font-bold">{feature.title}</p>
+                  <p className="mt-2 text-sm text-muted">{feature.description}</p>
                 </Card>
               ))}
             </div>
@@ -107,14 +127,30 @@ export default async function HomePage() {
         <section className="py-10">
           <Container className="space-y-8">
             <div className="space-y-3">
-              <Badge>Student feedback</Badge>
-              <PageTitle className="text-3xl sm:text-4xl">A calmer way to revise</PageTitle>
+              <Badge>Why it feels different</Badge>
+              <PageTitle className="text-3xl sm:text-4xl">A calmer way to revise when exams are close</PageTitle>
+              <SubTitle>
+                GradeUp is built to remove clutter. Students get board-specific subjects, a clear route through each course, and fewer dead ends between notes, quizzes, and papers.
+              </SubTitle>
             </div>
             <div className="grid gap-4 md:grid-cols-3">
-              {testimonials.map((testimonial) => (
-                <Card key={testimonial.name}>
-                  <p className="text-base font-semibold">{testimonial.name}</p>
-                  <p className="mt-3 text-sm text-muted">“{testimonial.quote}”</p>
+              {[
+                {
+                  title: "Less scrolling, more revising",
+                  body: "Compact unit maps stop subjects turning into huge, messy pages and make it easier to pick a sensible next step.",
+                },
+                {
+                  title: "Board-specific from the start",
+                  body: "Students can choose their subject and exam board instead of being pushed into one generic revision path.",
+                },
+                {
+                  title: "Free first, AI second",
+                  body: "Core revision tools are already useful. The paid layer is for heavier AI help, not basic access.",
+                },
+              ].map((item) => (
+                <Card key={item.title}>
+                  <p className="text-base font-semibold">{item.title}</p>
+                  <p className="mt-3 text-sm text-muted">{item.body}</p>
                 </Card>
               ))}
             </div>
