@@ -19,6 +19,11 @@ export default async function StreakPage() {
   });
 
   const streakLength = getStreakLength(streakEntries.map((entry) => entry.dateKey));
+  const activeThisMonth = streakEntries.filter((entry) => {
+    const date = new Date(entry.date);
+    const now = new Date();
+    return date.getUTCFullYear() === now.getUTCFullYear() && date.getUTCMonth() === now.getUTCMonth();
+  }).length;
 
   return (
     <MainLayout>
@@ -30,14 +35,21 @@ export default async function StreakPage() {
         />
         <div className="grid gap-6 xl:grid-cols-[0.8fr_1.2fr]">
           <Card title="Streak stats" subtitle="Momentum matters more than perfect sessions.">
-            <div className="space-y-4">
+            <div className="grid gap-3 sm:grid-cols-3">
               <div className="rounded-[24px] bg-[var(--surface-strong)] p-5">
                 <p className="text-sm text-muted">Current streak</p>
-                <p className="mt-2 text-4xl font-semibold">{streakLength}</p>
+                <p className="mt-2 text-3xl font-semibold">{streakLength}</p>
               </div>
               <div className="rounded-[24px] bg-[var(--surface-strong)] p-5">
                 <p className="text-sm text-muted">Activity entries</p>
-                <p className="mt-2 text-4xl font-semibold">{streakEntries.length}</p>
+                <p className="mt-2 text-3xl font-semibold">{streakEntries.length}</p>
+              </div>
+              <div className="rounded-[24px] bg-[var(--surface-strong)] p-5">
+                <p className="text-sm text-muted">Longest streak</p>
+                <p className="mt-2 text-3xl font-semibold">
+                  {Math.max(streakLength, viewer.rpgProfile?.longestStreak ?? 0)}
+                </p>
+                <p className="mt-1 text-xs text-muted">{activeThisMonth} active day{activeThisMonth === 1 ? "" : "s"} this month</p>
               </div>
             </div>
           </Card>

@@ -9,14 +9,21 @@ export default function SimpleMarkdown({ content, className }: SimpleMarkdownPro
     | { type: "h1" | "h2"; text: string }
     | { type: "p"; text: string }
     | { type: "ul"; items: string[] }
+    | { type: "ol"; items: string[] }
   > = [];
 
   let listBuffer: string[] = [];
+  let orderedListBuffer: string[] = [];
 
   const flushList = () => {
     if (listBuffer.length) {
       blocks.push({ type: "ul", items: listBuffer });
       listBuffer = [];
+    }
+
+    if (orderedListBuffer.length) {
+      blocks.push({ type: "ol", items: orderedListBuffer });
+      orderedListBuffer = [];
     }
   };
 
@@ -28,8 +35,13 @@ export default function SimpleMarkdown({ content, className }: SimpleMarkdownPro
       continue;
     }
 
-    if (line.startsWith("- ")) {
+    if (line.startsWith("- ") || line.startsWith("* ")) {
       listBuffer.push(line.slice(2).trim());
+      continue;
+    }
+
+    if (/^\d+\.\s/.test(line)) {
+      orderedListBuffer.push(line.replace(/^\d+\.\s/, "").trim());
       continue;
     }
 
@@ -76,6 +88,16 @@ export default function SimpleMarkdown({ content, className }: SimpleMarkdownPro
                 <li key={`${item}-${itemIndex}`}>{item}</li>
               ))}
             </ul>
+          );
+        }
+
+        if (block.type === "ol") {
+          return (
+            <ol key={`ol-${index}`} className="mt-3 space-y-2 pl-5 text-sm leading-7 text-muted list-decimal">
+              {block.items.map((item, itemIndex) => (
+                <li key={`${item}-${itemIndex}`}>{item}</li>
+              ))}
+            </ol>
           );
         }
 

@@ -39,7 +39,11 @@ export default async function SchedulePage() {
   ]);
 
   const schedule = buildWeeklySchedule(topics);
-  const visibleSchedule = schedule.length >= 8 ? schedule.slice(0, Math.floor(schedule.length / 4) * 4) : schedule;
+  const [todaySlot, ...upcomingSchedule] = schedule;
+  const visibleUpcoming =
+    upcomingSchedule.length >= 4
+      ? upcomingSchedule.slice(0, Math.floor(upcomingSchedule.length / 4) * 4)
+      : upcomingSchedule;
   const streak = getStreakLength(streakEntries.map((entry) => entry.dateKey));
   const aiSubjects = predictions.map((prediction) => ({
     slug: prediction.topic.subject.slug,
@@ -67,39 +71,71 @@ export default async function SchedulePage() {
         </Card>
 
         <Card title="Suggested spaced schedule" subtitle="A built-in fallback plan so you always have a calm, doable week to follow.">
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-            {visibleSchedule.map((slot, index) => (
-              <div
-                key={`${slot.dayLabel}-${slot.topic.id}`}
-                className={`glass-panel rounded-[24px] p-4 animate-fade-up stagger-${(index % 4) + 1} ${slot.isToday ? "border border-[var(--primary)] ring-2 ring-[var(--primary)]/30" : ""}`}
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--accent)]">
-                    {slot.dayLabel} · {slot.dateLabel}
-                  </p>
-                  {slot.isToday ? (
-                    <span className="rounded-full bg-[var(--primary)] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-white">
-                      Today
-                    </span>
-                  ) : null}
-                </div>
-                <h2 className="mt-2 text-lg font-semibold leading-6">{slot.topic.title}</h2>
-                <p className="mt-1 text-sm text-muted">{slot.topic.subject.name ?? slot.topic.subject.title}</p>
-                <div className="mt-3 flex flex-wrap gap-2 text-xs">
-                  <span className="rounded-full bg-[var(--surface-strong)] px-3 py-1 text-muted">
-                    {slot.sessionLabel}
-                  </span>
-                  <span className="rounded-full bg-[var(--surface-strong)] px-3 py-1 text-muted">
-                    {slot.focusMinutes} min focus
+          <div className="space-y-4">
+            {todaySlot ? (
+              <div className="glass-panel rounded-[26px] border border-[var(--primary)] p-5 ring-2 ring-[var(--primary)]/25">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--accent)]">
+                      {todaySlot.dayLabel} · {todaySlot.dateLabel}
+                    </p>
+                    <h2 className="mt-2 text-xl font-bold">Today&apos;s focus: {todaySlot.topic.title}</h2>
+                    <p className="mt-1 text-sm text-muted">
+                      {todaySlot.topic.subject.name ?? todaySlot.topic.subject.title}
+                    </p>
+                  </div>
+                  <span className="rounded-full bg-[var(--primary)] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-white">
+                    Today
                   </span>
                 </div>
-                <div className="mt-3 flex items-center justify-end gap-3">
-                  <Link href={`/topics/${slot.topic.slug}`} className="text-sm font-semibold text-[var(--primary)]">
+                <div className="mt-4 flex flex-wrap gap-2 text-xs">
+                  <span className="rounded-full bg-[var(--surface-strong)] px-3 py-1 text-muted">
+                    {todaySlot.sessionLabel}
+                  </span>
+                  <span className="rounded-full bg-[var(--surface-strong)] px-3 py-1 text-muted">
+                    {todaySlot.focusMinutes} min focus
+                  </span>
+                </div>
+                <div className="mt-4 flex items-center justify-end">
+                  <Link href={`/topics/${todaySlot.topic.slug}`} className="text-sm font-semibold text-[var(--primary)]">
                     Open topic →
                   </Link>
                 </div>
               </div>
-            ))}
+            ) : null}
+
+            {visibleUpcoming.length ? (
+              <div className="space-y-3">
+                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted">Coming up next</p>
+                <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+                  {visibleUpcoming.map((slot, index) => (
+                    <div
+                      key={`${slot.dayLabel}-${slot.topic.id}`}
+                      className={`glass-panel rounded-[24px] p-4 animate-fade-up stagger-${(index % 4) + 1}`}
+                    >
+                      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--accent)]">
+                        {slot.dayLabel} · {slot.dateLabel}
+                      </p>
+                      <h2 className="mt-2 text-lg font-semibold leading-6">{slot.topic.title}</h2>
+                      <p className="mt-1 text-sm text-muted">{slot.topic.subject.name ?? slot.topic.subject.title}</p>
+                      <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                        <span className="rounded-full bg-[var(--surface-strong)] px-3 py-1 text-muted">
+                          {slot.sessionLabel}
+                        </span>
+                        <span className="rounded-full bg-[var(--surface-strong)] px-3 py-1 text-muted">
+                          {slot.focusMinutes} min focus
+                        </span>
+                      </div>
+                      <div className="mt-3 flex items-center justify-end gap-3">
+                        <Link href={`/topics/${slot.topic.slug}`} className="text-sm font-semibold text-[var(--primary)]">
+                          Open topic →
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </div>
         </Card>
       </div>

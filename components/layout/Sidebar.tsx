@@ -30,10 +30,10 @@ export default function Sidebar() {
             <Link
               key={link.href}
               href={link.href}
-              className={`block rounded-3xl px-4 py-3 transition ${
+              className={`block rounded-3xl border px-4 py-3 transition ${
                 active
-                  ? "bg-[var(--primary)] text-white"
-                  : "bg-[color-mix(in_srgb,var(--background)_84%,var(--accent)_16%)] text-[var(--foreground)] hover:bg-[color-mix(in_srgb,var(--background)_70%,var(--accent)_30%)]"
+                  ? "border-[var(--primary)] bg-[var(--primary)] text-white shadow-[0_12px_24px_-18px_var(--primary)]"
+                  : "border-[color-mix(in_srgb,var(--border)_85%,transparent)] bg-[color-mix(in_srgb,var(--background)_82%,var(--accent)_18%)] text-[var(--foreground)] hover:border-[color-mix(in_srgb,var(--primary)_35%,var(--border))] hover:bg-[color-mix(in_srgb,var(--background)_66%,var(--accent)_34%)]"
               }`}
             >
               <p className="font-semibold">{link.label}</p>
