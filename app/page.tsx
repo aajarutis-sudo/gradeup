@@ -25,10 +25,10 @@ const features = [
   "Streaks, XP, and levels",
 ];
 
-const nonprofitValues = [
-  "No paywalls. No ads. Just learning.",
-  "Built to support students who need calm, accessible revision.",
-  "Growing through community contributions, transparency, and open education.",
+const productValues = [
+  "Free users still get strong revision tools from day one.",
+  "Plus is reserved for the expensive AI layer: chat, notes, and extra practice.",
+  "Built to feel calm, focused, and genuinely useful when exams are close.",
 ];
 
 export default async function HomePage() {
@@ -49,9 +49,9 @@ export default async function HomePage() {
           <section className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
             <div className="space-y-6 animate-fade-up">
               <Badge>Education for everyone</Badge>
-              <PageTitle>Free GCSE revision, built for students</PageTitle>
+              <PageTitle>GCSE revision that feels premium without being chaotic</PageTitle>
               <SubTitle>
-                GradeUp is building calm, accessible GCSE revision with no paywalls, no ads, and no pressure. Personalised learning, AI support, and focused practice all in one place.
+                Core revision stays generous and easy to access. Upgrade only when you want the heavier AI tools like live tutoring, AI notes, and extra practice generation.
               </SubTitle>
               <div className="flex flex-wrap gap-4">
                 <Link href="/sign-in?redirect_url=/onboarding" className="inline-flex rounded-full bg-[var(--primary)] px-6 py-3 text-sm font-semibold text-white">
@@ -60,8 +60,8 @@ export default async function HomePage() {
                 <Link href="/#features" className="inline-flex rounded-full border border-[var(--border)] bg-[var(--background-elevated)] px-6 py-3 text-sm font-semibold">
                   Explore Features
                 </Link>
-                <Link href="/support" className="inline-flex rounded-full border border-[var(--border)] bg-[var(--background-elevated)] px-6 py-3 text-sm font-semibold">
-                  Support GradeUp
+                <Link href="/plans" className="inline-flex rounded-full border border-[var(--border)] bg-[var(--background-elevated)] px-6 py-3 text-sm font-semibold">
+                  See Plans
                 </Link>
               </div>
             </div>
@@ -75,7 +75,7 @@ export default async function HomePage() {
                   ))}
                 </div>
                 <div className="mt-4 space-y-3">
-                  {nonprofitValues.map((value, index) => (
+                  {productValues.map((value, index) => (
                     <div key={value} className={`rounded-3xl bg-[var(--background)] p-4 text-sm text-muted animate-fade-up stagger-${(index % 4) + 1}`}>
                       {value}
                     </div>
@@ -124,37 +124,17 @@ export default async function HomePage() {
         <section className="py-10">
           <Container>
             <Card className="rounded-[36px]">
-              <Badge>Mission</Badge>
-              <PageTitle className="mt-3 text-3xl sm:text-4xl">Built by students, for students</PageTitle>
+              <Badge>Positioning</Badge>
+              <PageTitle className="mt-3 text-3xl sm:text-4xl">Start free. Upgrade for the AI layer.</PageTitle>
               <SubTitle className="mt-3">
-                GradeUp exists to make high-quality GCSE revision free, supportive, and accessible. We want every learner to have clear next steps, trustworthy tools, and a community that helps them keep going.
+                The free plan covers the essentials properly: subjects, quizzes, flashcards, revision scheduling, and past papers. GradeUp Plus gives you the compute-heavy tools without forcing every user onto paid access.
               </SubTitle>
               <div className="mt-6 flex flex-wrap gap-4">
-                <Link href="/mission" className="inline-flex rounded-full bg-[var(--primary)] px-6 py-3 text-sm font-semibold text-white">
-                  Read our mission
+                <Link href="/plans" className="inline-flex rounded-full bg-[var(--primary)] px-6 py-3 text-sm font-semibold text-white">
+                  View plans
                 </Link>
-                <Link href="/transparency" className="inline-flex rounded-full bg-[var(--background)] px-6 py-3 text-sm font-semibold">
-                  View transparency page
-                </Link>
-              </div>
-            </Card>
-          </Container>
-        </section>
-
-        <section className="py-10">
-          <Container>
-            <Card className="rounded-[36px]">
-              <Badge>Support</Badge>
-              <PageTitle className="mt-3 text-3xl sm:text-4xl">Free to use. Community-supported.</PageTitle>
-              <SubTitle className="mt-3">
-                GradeUp is staying free while we build. Support helps cover hosting, content review, accessibility work, and AI study tools without putting revision behind a paywall.
-              </SubTitle>
-              <div className="mt-6 flex flex-wrap gap-4">
-                <Link href="/support" className="inline-flex rounded-full bg-[var(--primary)] px-6 py-3 text-sm font-semibold text-white">
-                  Support GradeUp
-                </Link>
-                <Link href="/sign-in?redirect_url=/onboarding" className="inline-flex rounded-full bg-[var(--background)] px-6 py-3 text-sm font-semibold">
-                  Start revising
+                <Link href="/subjects" className="inline-flex rounded-full bg-[var(--background)] px-6 py-3 text-sm font-semibold">
+                  Explore subjects
                 </Link>
               </div>
             </Card>

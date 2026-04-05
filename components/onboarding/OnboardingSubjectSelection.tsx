@@ -13,6 +13,7 @@ export default function OnboardingSubjectSelection({ subjects }: OnboardingSubje
   const [selectedSubjects, setSelectedSubjects] = useState<Map<string, string>>(new Map());
   const [showExamBoardDropdown, setShowExamBoardDropdown] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const examBoards = ["AQA", "Edexcel", "OCR", "WJEC", "CCEA"];
@@ -40,6 +41,7 @@ export default function OnboardingSubjectSelection({ subjects }: OnboardingSubje
       return;
     }
 
+    setError(null);
     setIsLoading(true);
     try {
       // Save all selected subjects
@@ -67,7 +69,7 @@ export default function OnboardingSubjectSelection({ subjects }: OnboardingSubje
       }
     } catch (error) {
       console.error("Error saving subjects:", error);
-      alert("Failed to save subjects. Please try again.");
+      setError("We could not save your subjects yet. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -157,6 +159,12 @@ export default function OnboardingSubjectSelection({ subjects }: OnboardingSubje
         })}
       </div>
 
+      {error ? (
+        <div className="rounded-[24px] border border-[var(--danger)]/30 bg-[var(--background)] p-4 text-sm text-[var(--danger)]">
+          {error}
+        </div>
+      ) : null}
+
       <div className="flex gap-4 justify-between pt-6">
         <p className="text-sm text-muted self-center">
           {selectedSubjects.size === 0
@@ -168,7 +176,7 @@ export default function OnboardingSubjectSelection({ subjects }: OnboardingSubje
           disabled={selectedSubjects.size === 0 || isLoading}
           className="px-8"
         >
-          {isLoading ? "Saving..." : "Continue to Dashboard"}
+          {isLoading ? "Saving..." : "Start diagnostic"}
         </Button>
       </div>
     </div>

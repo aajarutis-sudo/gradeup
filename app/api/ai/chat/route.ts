@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getViewer } from "@/lib/auth";
+import { getUserPlan, hasPlanFeature } from "@/lib/access";
 import { callChatAI } from "@/lib/ai";
 
 type ChatBody = {
@@ -13,6 +14,10 @@ export async function POST(request: Request) {
   const viewer = await getViewer();
   if (!viewer) {
     return NextResponse.json({ error: "User sync failed" }, { status: 500 });
+  }
+
+  if (!hasPlanFeature(getUserPlan(viewer), "ai-chat")) {
+    return NextResponse.json({ error: "AI Coach is available on GradeUp Plus." }, { status: 403 });
   }
 
   const body = (await request.json()) as ChatBody;

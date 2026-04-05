@@ -13,7 +13,6 @@ import {
     Users,
     Lightbulb,
     Settings,
-    Heart,
     Menu,
     X,
     ChevronDown
@@ -98,15 +97,15 @@ export const Sidebar: React.FC = () => {
                     </ul>
                 </nav>
 
-                {/* Donate & Settings Section */}
+                {/* Plans & Settings Section */}
                 <div className="border-t border-gray-200 p-3 space-y-2">
                     <Link
-                        href="/donate"
-                        className="flex items-center gap-3 px-4 py-3 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 font-medium transition-colors"
+                        href="/plans"
+                        className="flex items-center gap-3 px-4 py-3 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 font-medium transition-colors"
                         onClick={() => setIsOpen(false)}
                     >
-                        <Heart size={20} className="flex-shrink-0" />
-                        {!isCollapsed && <span>Donate</span>}
+                        <Sparkles size={20} className="flex-shrink-0" />
+                        {!isCollapsed && <span>Plans</span>}
                     </Link>
                     <Link
                         href="/settings"

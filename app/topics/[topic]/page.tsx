@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { getViewer } from "@/lib/auth";
+import { getUserPlan, hasPlanFeature } from "@/lib/access";
 import MainLayout from "@/components/layout/MainLayout";
 import Card from "@/components/cards/Card";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -38,6 +39,9 @@ export default async function TopicPage({
 
   const progress = topic.progress[0];
   const completion = progress?.completed ?? 0;
+  const plan = getUserPlan(viewer);
+  const hasAINotes = hasPlanFeature(plan, "ai-notes");
+  const hasAIPractice = hasPlanFeature(plan, "ai-practice");
 
   return (
     <MainLayout>
@@ -72,14 +76,14 @@ export default async function TopicPage({
           <Card title="Choose your mode" subtitle="Different revision modes for the same topic.">
             <div className="grid gap-3">
               <Link
-                href={`/topics/${topic.slug}/notes`}
+                href={hasAINotes ? `/topics/${topic.slug}/notes` : "/plans"}
                 className="relative overflow-hidden rounded-[22px] border border-[var(--border)] bg-[var(--background)] px-5 py-4 font-semibold"
               >
                 <span className="absolute inset-y-0 left-0 w-2 rounded-l-[22px] bg-[linear-gradient(180deg,var(--secondary),var(--primary))]" />
                 <span className="ml-3 flex items-center justify-between gap-3">
                   <span>Read AI notes</span>
                   <span className="rounded-full bg-[color-mix(in_srgb,var(--accent)_28%,transparent)] px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[var(--primary)]">
-                    AI
+                    {hasAINotes ? "AI" : "Plus"}
                   </span>
                 </span>
               </Link>
@@ -90,14 +94,14 @@ export default async function TopicPage({
                 Review flashcards
               </Link>
               <Link
-                href={`/topics/${topic.slug}/practice`}
+                href={hasAIPractice ? `/topics/${topic.slug}/practice` : "/plans"}
                 className="relative overflow-hidden rounded-[22px] border border-[var(--border)] bg-[var(--background)] px-5 py-4 font-semibold"
               >
                 <span className="absolute inset-y-0 left-0 w-2 rounded-l-[22px] bg-[linear-gradient(180deg,var(--accent),var(--primary))]" />
                 <span className="ml-3 flex items-center justify-between gap-3">
                   <span>Practice questions</span>
                   <span className="rounded-full bg-[color-mix(in_srgb,var(--accent)_28%,transparent)] px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-[var(--primary)]">
-                    AI
+                    {hasAIPractice ? "AI" : "Plus"}
                   </span>
                 </span>
               </Link>

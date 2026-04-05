@@ -11,9 +11,7 @@ import CommandPalette from "@/components/CommandPalette";
 const items = [
   { href: "/subjects", label: "Subjects" },
   { href: "/dashboard", label: "Dashboard" },
-  { href: "/mission", label: "Mission" },
-  { href: "/support", label: "Donate" },
-  { href: "/transparency", label: "Transparency" },
+  { href: "/plans", label: "Plans" },
   { href: "/schedule", label: "Schedule" },
 ];
 

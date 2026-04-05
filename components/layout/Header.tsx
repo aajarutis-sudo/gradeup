@@ -13,6 +13,7 @@ const navLinks = [
   { href: "/onboarding", label: "Onboarding" },
   { href: "/schedule", label: "Schedule" },
   { href: "/streak", label: "Streak" },
+  { href: "/plans", label: "Plans" },
 ];
 
 export default function Header() {

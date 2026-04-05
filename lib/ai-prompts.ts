@@ -70,7 +70,29 @@ function stableJson(value: unknown) {
   return JSON.stringify(value, null, 2);
 }
 
-export function buildDiagnosticPrompt(input: { subject: string }): PromptBundle {
+function scopeLines(input: {
+  examBoard?: string | null;
+  summary?: string | null;
+  subtopics?: string[];
+  guardrails?: string | null;
+}) {
+  return [
+    input.examBoard ? `ExamBoard: ${input.examBoard}` : "",
+    input.summary ? `Summary: ${input.summary}` : "",
+    input.subtopics?.length ? `Subtopics: ${stableJson(input.subtopics)}` : "",
+    input.guardrails ? `Scope rules:\n${input.guardrails}` : "",
+  ]
+    .filter(Boolean)
+    .join("\n");
+}
+
+export function buildDiagnosticPrompt(input: {
+  subject: string;
+  examBoard?: string | null;
+  summary?: string | null;
+  subtopics?: string[];
+  guardrails?: string | null;
+}): PromptBundle {
   return {
     systemPrompt:
       "You are an expert GCSE teacher. Be accurate, concise, safe, and supportive. Avoid copyrighted text. Return only valid JSON.",
@@ -78,12 +100,14 @@ export function buildDiagnosticPrompt(input: { subject: string }): PromptBundle 
 
 Requirements:
 - Subject: ${input.subject}
+- Only write content that genuinely belongs to this subject.
 - Output 5-10 multiple-choice questions.
 - Each question must test a different topic within the subject.
 - Difficulty: standard GCSE level.
 - No copyrighted text.
 - No long explanations.
 - Keep questions short and clear.
+${scopeLines(input)}
 
 For each question, return:
 {
@@ -273,6 +297,7 @@ Requirements:
 - Back: simple explanation.
 - No copyrighted text.
 - Keep explanations short.
+- Keep every flashcard strictly inside this subject and topic.
 
 Return JSON:
 {
@@ -311,6 +336,7 @@ export function buildLessonNotesPrompt(input: {
   examBoard?: string | null;
   summary?: string | null;
   subtopics?: string[];
+  guardrails?: string | null;
 }): PromptBundle {
   return {
     systemPrompt:
@@ -322,6 +348,7 @@ Topic: ${input.topic}
 ExamBoard: ${input.examBoard ?? "GCSE specification"}
 Summary: ${input.summary ?? "No summary provided."}
 Subtopics: ${stableJson(input.subtopics ?? [])}
+${input.guardrails ? `Scope rules:\n${input.guardrails}` : ""}
 
 Requirements:
 - Match the specification area named above.
@@ -331,6 +358,7 @@ Requirements:
 - Make the notes feel complete, not skeletal.
 - Write a full overview, at least several key points, and notes for each listed subtopic if subtopics are provided.
 - Avoid repeating the same idea across key points and subtopic notes.
+- Do not bring in examples or terminology from unrelated GCSE subjects.
 
 Return JSON:
 {
@@ -376,7 +404,15 @@ Return JSON:
   };
 }
 
-export function buildQuizPrompt(input: { topic: string; subject: string; level: number }): PromptBundle {
+export function buildQuizPrompt(input: {
+  topic: string;
+  subject: string;
+  level: number;
+  examBoard?: string | null;
+  summary?: string | null;
+  subtopics?: string[];
+  guardrails?: string | null;
+}): PromptBundle {
   return {
     systemPrompt:
       "You generate GCSE multiple-choice quizzes that are clear, varied, and aligned to the student's level. Return only valid JSON.",
@@ -385,12 +421,14 @@ export function buildQuizPrompt(input: { topic: string; subject: string; level: 
 Topic: ${input.topic}
 Subject: ${input.subject}
 Difficulty: adapt to user level ${input.level}
+${scopeLines(input)}
 
 Requirements:
 - 5-10 multiple-choice questions.
 - Each question must be unique.
 - Include 4 options.
 - Mark the correct answer.
+- Every question must belong clearly to this subject and topic only.
 
 Return JSON:
 {

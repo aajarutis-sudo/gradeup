@@ -8,6 +8,7 @@ export async function runAIRoute<TBody>(options: {
   request: Request;
   type: AIRequestType;
   buildPrompt: (body: TBody) => PromptBundle;
+  transformResult?: (body: TBody, result: unknown) => unknown;
 }) {
   const { userId } = await auth();
   if (!userId) {
@@ -19,7 +20,8 @@ export async function runAIRoute<TBody>(options: {
   try {
     const prompt = options.buildPrompt(body);
     const aiResult = await callAI({ type: options.type, prompt, userId });
-    return NextResponse.json({ ok: true, result: aiResult.data, model: aiResult.model });
+    const result = options.transformResult ? options.transformResult(body, aiResult.data) : aiResult.data;
+    return NextResponse.json({ ok: true, result, model: aiResult.model });
   } catch (error) {
     const message = error instanceof Error ? error.message : "AI request failed.";
     return NextResponse.json({ error: message }, { status: 400 });

@@ -21,11 +21,17 @@ export default function AIPracticeQuestionsClient({
   topicTitle,
   subjectName,
   level,
+  examBoard,
+  summary,
+  subtopics,
 }: {
   topicSlug: string;
   topicTitle: string;
   subjectName: string;
   level: number;
+  examBoard?: string | null;
+  summary?: string | null;
+  subtopics: string[];
 }) {
   const [questions, setQuestions] = useState<PracticeQuestion[]>([]);
   const [answers, setAnswers] = useState<Record<number, number>>({});
@@ -58,6 +64,9 @@ export default function AIPracticeQuestionsClient({
           topic: topicTitle,
           subject: subjectName,
           level,
+          examBoard,
+          summary,
+          subtopics,
         }),
       });
 

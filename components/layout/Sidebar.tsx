@@ -6,10 +6,11 @@ import { usePathname } from "next/navigation";
 const links = [
   { href: "/dashboard", label: "Overview", hint: "Your main hub" },
   { href: "/subjects", label: "Subjects", hint: "Browse every GCSE course" },
-  { href: "/chat", label: "AI Coach", hint: "Ask revision questions anytime" },
+  { href: "/chat", label: "AI Coach", hint: "Premium AI study help" },
   { href: "/continue", label: "Continue", hint: "Jump back in quickly" },
   { href: "/schedule", label: "Schedule", hint: "Planned weekly sessions" },
   { href: "/streak", label: "Streaks & XP", hint: "Track momentum" },
+  { href: "/plans", label: "Plans", hint: "Free vs Plus access" },
 ];
 
 export default function Sidebar() {

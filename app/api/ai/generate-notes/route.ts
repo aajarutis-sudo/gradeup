@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { callAI } from "@/lib/ai";
 import { buildLessonNotesPrompt, type LessonNotesResult } from "@/lib/ai-prompts";
+import { buildSubjectGuardrails, hasSubjectMismatch } from "@/lib/subject-guardrails";
+import { getViewer } from "@/lib/auth";
+import { getUserPlan, hasPlanFeature } from "@/lib/access";
 
 type NotesBody = {
   subject?: string;
@@ -98,10 +101,30 @@ function normalizeNotes(body: NotesBody, notes: Partial<LessonNotesResult>): Les
   };
 }
 
+function collectNotesText(notes: LessonNotesResult) {
+  return [
+    notes.title,
+    notes.overview,
+    ...notes.keyPoints,
+    ...notes.examLinks,
+    ...notes.quickCheck,
+    ...notes.subtopicNotes.flatMap((item) => [item.subtopic, ...item.notes]),
+  ].join(" ");
+}
+
 export async function POST(request: Request) {
   const { userId } = await auth();
   if (!userId) {
     return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+
+  const viewer = await getViewer();
+  if (!viewer) {
+    return NextResponse.json({ error: "Unable to load user." }, { status: 500 });
+  }
+
+  if (!hasPlanFeature(getUserPlan(viewer), "ai-notes")) {
+    return NextResponse.json({ error: "AI notes are available on GradeUp Plus." }, { status: 403 });
   }
 
   const body = (await request.json()) as NotesBody;
@@ -117,15 +140,27 @@ export async function POST(request: Request) {
       examBoard: body.examBoard ?? null,
       summary: body.summary ?? null,
       subtopics: Array.isArray(body.subtopics) ? body.subtopics : [],
+      guardrails: buildSubjectGuardrails({
+        subject: body.subject,
+        topic: body.topic,
+        examBoard: body.examBoard ?? null,
+        summary: body.summary ?? null,
+        subtopics: Array.isArray(body.subtopics) ? body.subtopics : [],
+      }),
     });
 
     const aiResult = await callAI({
       type: "lesson-notes",
       prompt,
-      userId,
+      userId: viewer.id,
     });
 
     const normalized = normalizeNotes(body, aiResult.data as Partial<LessonNotesResult>);
+
+    if (hasSubjectMismatch({ subject: body.subject, text: collectNotesText(normalized) })) {
+      const safeFallback = normalizeNotes(body, {});
+      return NextResponse.json({ ok: true, result: safeFallback, model: `${aiResult.model} (guardrailed fallback)` });
+    }
 
     return NextResponse.json({ ok: true, result: normalized, model: aiResult.model });
   } catch (error) {

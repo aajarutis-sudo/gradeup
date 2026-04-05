@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import Button from "@/components/ui/Button";
 
 type DiagnosticQuestion = {
   id: string;
@@ -30,12 +31,15 @@ export default function DiagnosticQuizClient({
 }) {
   const router = useRouter();
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const ready = questions.every((question) => answers[question.id]?.trim());
+  const answeredCount = questions.filter((question) => answers[question.id]?.trim().length).length;
 
   const submit = () => {
     if (!ready) return;
+    setError(null);
 
     startTransition(async () => {
       const response = await fetch("/api/onboarding/diagnostic", {
@@ -50,15 +54,19 @@ export default function DiagnosticQuizClient({
         }),
       });
 
-      if (!response.ok) return;
+      const payload = (await response.json()) as { error?: string };
 
-      // If there's a next subject, go to that quiz
-      if (nextSubjectSlug) {
-        router.push(`/onboarding/quiz?subject=${nextSubjectSlug}`);
-      } else {
-        // Otherwise go to results
-        router.push(`/onboarding/results?subject=${subjectSlug}`);
+      if (!response.ok) {
+        setError(payload.error ?? "We could not save this quiz yet. Try again in a moment.");
+        return;
       }
+
+      const destination = nextSubjectSlug
+        ? `/onboarding/quiz?subject=${nextSubjectSlug}`
+        : `/onboarding/results?subject=${subjectSlug}`;
+
+      router.push(destination);
+      router.refresh();
     });
   };
 
@@ -81,11 +89,14 @@ export default function DiagnosticQuizClient({
             <span className="text-xs font-semibold text-muted">{quizNumber}/{totalSubjects}</span>
           </div>
         </div>
-        <p className="mt-3 text-sm text-muted">Total marks: {questions.reduce((sum, q) => sum + q.marks, 0)}</p>
+        <div className="mt-3 flex flex-wrap items-center gap-4 text-sm text-muted">
+          <span>Total marks: {questions.reduce((sum, q) => sum + q.marks, 0)}</span>
+          <span>Answers completed: {answeredCount}/{questions.length}</span>
+        </div>
       </div>
 
       {questions.map((question, index) => (
-        <div key={question.id} className="surface-card rounded-[30px] p-6">
+        <div key={question.id} className="surface-card rounded-[30px] p-6 transition-all">
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted">
@@ -98,8 +109,14 @@ export default function DiagnosticQuizClient({
             </div>
           </div>
           <div className="mt-5 space-y-2">
+            {(() => {
+              const answerValue = answers[question.id] ?? "";
+              const recommendedLength = Math.max(40, question.marks * 35);
+
+              return (
+                <>
             <textarea
-              value={answers[question.id] || ""}
+              value={answerValue}
               onChange={(e) =>
                 setAnswers((current) => ({
                   ...current,
@@ -111,20 +128,28 @@ export default function DiagnosticQuizClient({
               rows={Math.ceil(question.marks / 2)}
             />
             <p className="text-xs text-muted">
-              {answers[question.id]?.length || 0} characters
+              {answerValue.length} characters written • aim for roughly {recommendedLength}+ for a fuller answer
             </p>
+                </>
+              );
+            })()}
           </div>
         </div>
       ))}
 
+      {error ? (
+        <div className="rounded-[24px] border border-[var(--danger)]/30 bg-[var(--background)] p-4 text-sm text-[var(--danger)]">
+          {error}
+        </div>
+      ) : null}
+
       <div className="flex justify-end">
-        <button
+        <Button
           onClick={submit}
           disabled={!ready || isPending}
-          className="inline-flex rounded-full bg-[var(--primary)] px-6 py-3 text-sm font-semibold text-white disabled:opacity-50"
         >
           {isPending ? "Calculating..." : nextSubjectSlug ? `Next: ${nextSubjectSlug.replace(/-/g, " ")}` : "See my results"}
-        </button>
+        </Button>
       </div>
     </div>
   );

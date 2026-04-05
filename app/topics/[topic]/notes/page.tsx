@@ -1,8 +1,10 @@
 import { notFound, redirect } from "next/navigation";
 import prisma from "@/lib/prisma";
 import { getViewer } from "@/lib/auth";
+import { getUserPlan, hasPlanFeature } from "@/lib/access";
 import MainLayout from "@/components/layout/MainLayout";
 import AILessonNotesClient from "@/components/topic/AILessonNotesClient";
+import FeatureLockCard from "@/components/access/FeatureLockCard";
 
 export default async function TopicNotesPage({
   params,
@@ -29,15 +31,24 @@ export default async function TopicNotesPage({
     notFound();
   }
 
+  const plan = getUserPlan(viewer);
+
   return (
     <MainLayout>
-      <AILessonNotesClient
-        subjectName={topic.subject.name ?? topic.subject.title}
-        examBoard={topic.examBoard ?? topic.subject.examBoard}
-        topicTitle={topic.title}
-        summary={topic.summary}
-        subtopics={topic.subtopics.map((subtopic) => subtopic.title)}
-      />
+      {hasPlanFeature(plan, "ai-notes") ? (
+        <AILessonNotesClient
+          subjectName={topic.subject.name ?? topic.subject.title}
+          examBoard={topic.examBoard ?? topic.subject.examBoard}
+          topicTitle={topic.title}
+          summary={topic.summary}
+          subtopics={topic.subtopics.map((subtopic) => subtopic.title)}
+        />
+      ) : (
+        <FeatureLockCard
+          title="AI notes are part of GradeUp Plus"
+          description="The free plan still includes seeded lesson content, flashcards, quizzes, schedules, and past papers. Plus unlocks fresh AI notes for each topic when you want deeper revision support."
+        />
+      )}
     </MainLayout>
   );
 }

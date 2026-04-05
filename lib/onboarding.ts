@@ -354,20 +354,12 @@ export async function saveDiagnosticResult({
     },
   });
 
-  // Mark user as onboarded
-  await prisma.user.update({
-    where: { id: userId },
-    data: {
-      onboardedAt: new Date(),
-    },
-  });
-
   // Award XP and handle level ups
   const xpEarned = answers.length * 10;
   const rpg = await addXP(userId, xpEarned);
 
   // Award badge for first quiz
-  await awardBadge(userId, "CONSISTENCY_KING");
+  await awardBadge(userId, "FIRST_QUIZ");
   await syncLevelBadges(userId, levelFromXP(rpg.totalXP));
 
   // Log the study session
