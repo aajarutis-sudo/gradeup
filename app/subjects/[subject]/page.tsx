@@ -3,7 +3,8 @@ import prisma from "@/lib/prisma";
 import { getViewer } from "@/lib/auth";
 import MainLayout from "@/components/layout/MainLayout";
 import SectionHeading from "@/components/ui/SectionHeading";
-import SubjectCard from "@/components/subjects/SubjectCard";
+import Card from "@/components/cards/Card";
+import CompactUnitGrid from "@/components/subjects/CompactUnitGrid";
 
 export default async function SubjectPage({
     params,
@@ -19,15 +20,21 @@ export default async function SubjectPage({
     const subjectDb = await prisma.subject.findUnique({
         where: { slug },
         include: {
-            topics: true,
+            topics: {
+                include: {
+                    lessons: true,
+                    subtopics: {
+                        orderBy: { orderIndex: "asc" },
+                    },
+                },
+                orderBy: { orderIndex: "asc" },
+            },
         },
     });
 
     if (!subjectDb) {
         notFound();
     }
-
-    const averageCompletion = 0; // TODO: Calculate based on viewer progress
 
     return (
         <MainLayout>
@@ -37,20 +44,31 @@ export default async function SubjectPage({
                     title={subjectDb.name ?? subjectDb.title}
                     description={subjectDb.description ?? "A focused GCSE revision track."}
                 />
-                <div className="grid-auto">
-                    {subjectDb.topics.map((topic) => (
-                        <SubjectCard
-                            key={topic.id}
-                            slug={topic.slug}
-                            name={topic.title}
-                            description="Focus area within this subject."
-                            color={subjectDb.color}
+                <Card
+                    title="Course units"
+                    subtitle={`Board-specific units for ${subjectDb.examBoard ?? "GCSE"} ${subjectDb.name ?? subjectDb.title}. Open any unit to read lesson notes, revise subtopics, and move into quizzes or flashcards.`}
+                >
+                    {subjectDb.topics.length ? (
+                        <CompactUnitGrid
                             examBoard={subjectDb.examBoard}
-                            topicCount={1}
-                            completion={averageCompletion}
+                            units={subjectDb.topics.map((topic) => ({
+                                id: topic.id,
+                                slug: topic.slug,
+                                title: topic.title,
+                                summary: topic.summary,
+                                lessonTitle: topic.lessons[0]?.title,
+                                subtopics: topic.subtopics.map((subtopic) => ({
+                                    id: subtopic.id,
+                                    title: subtopic.title,
+                                })),
+                            }))}
                         />
-                    ))}
-                </div>
+                    ) : (
+                        <div className="rounded-[24px] bg-[var(--background)] p-5 text-sm text-muted">
+                            No units are loaded for this subject yet. Run the updated seed so the full exam-board curriculum appears here.
+                        </div>
+                    )}
+                </Card>
             </div>
         </MainLayout>
     );

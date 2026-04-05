@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Subject } from "@prisma/client";
 import Button from "@/components/ui/Button";
@@ -14,9 +14,26 @@ export default function OnboardingSubjectSelection({ subjects }: OnboardingSubje
   const [showExamBoardDropdown, setShowExamBoardDropdown] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [boardFilter, setBoardFilter] = useState("all");
   const router = useRouter();
 
   const examBoards = ["AQA", "Edexcel", "OCR", "WJEC", "CCEA"];
+
+  const filteredSubjects = useMemo(() => {
+    const normalizedSearch = search.trim().toLowerCase();
+
+    return subjects.filter((subject) => {
+      const matchesBoard = boardFilter === "all" || subject.examBoard === boardFilter;
+      const matchesSearch =
+        !normalizedSearch ||
+        subject.title.toLowerCase().includes(normalizedSearch) ||
+        subject.slug.toLowerCase().includes(normalizedSearch) ||
+        (subject.description?.toLowerCase().includes(normalizedSearch) ?? false);
+
+      return matchesBoard && matchesSearch;
+    });
+  }, [boardFilter, search, subjects]);
 
   const toggleSubject = (subjectId: string) => {
     const newSelected = new Map(selectedSubjects);
@@ -77,8 +94,56 @@ export default function OnboardingSubjectSelection({ subjects }: OnboardingSubje
 
   return (
     <div className="space-y-6">
+      <div className="grid gap-4 rounded-[28px] bg-[var(--background)] p-5 lg:grid-cols-[1.1fr_0.9fr]">
+        <div className="space-y-2">
+          <label htmlFor="subject-search" className="text-sm font-semibold">
+            Search subjects
+          </label>
+          <input
+            id="subject-search"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Try maths, business, biology, history..."
+            className="w-full rounded-2xl border border-[var(--border)] bg-[var(--background-elevated)] px-4 py-3 text-sm outline-none ring-0 transition focus:border-[var(--primary)]"
+          />
+        </div>
+        <div className="space-y-2">
+          <p className="text-sm font-semibold">Filter by exam board</p>
+          <div className="flex flex-wrap gap-2">
+            {["all", ...examBoards].map((board) => {
+              const active = boardFilter === board;
+
+              return (
+                <button
+                  key={board}
+                  type="button"
+                  onClick={() => setBoardFilter(board)}
+                  className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                    active
+                      ? "bg-[var(--primary)] text-white"
+                      : "bg-[var(--background-elevated)] text-muted hover:text-[var(--foreground)]"
+                  }`}
+                >
+                  {board === "all" ? "All boards" : board}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-muted">
+        <p>
+          Showing {filteredSubjects.length} subject{filteredSubjects.length !== 1 ? "s" : ""}
+          {boardFilter !== "all" ? ` for ${boardFilter}` : ""}
+        </p>
+        <p>
+          Selected: {selectedSubjects.size}
+        </p>
+      </div>
+
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {subjects.map((subject) => {
+        {filteredSubjects.map((subject) => {
           const isSelected = selectedSubjects.has(subject.id);
           const examBoard = selectedSubjects.get(subject.id);
 
@@ -158,6 +223,12 @@ export default function OnboardingSubjectSelection({ subjects }: OnboardingSubje
           );
         })}
       </div>
+
+      {filteredSubjects.length === 0 ? (
+        <div className="rounded-[24px] border border-[var(--border)] bg-[var(--background)] p-5 text-sm text-muted">
+          No subjects match that search yet. Try another keyword or switch the exam board filter back to all.
+        </div>
+      ) : null}
 
       {error ? (
         <div className="rounded-[24px] border border-[var(--danger)]/30 bg-[var(--background)] p-4 text-sm text-[var(--danger)]">
