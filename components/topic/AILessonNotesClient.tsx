@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Button from "@/components/ui/Button";
+import SimpleMarkdown from "@/components/ui/SimpleMarkdown";
 
 type NotesResult = {
   title: string;
@@ -86,7 +87,7 @@ export default function AILessonNotesClient({
           <div className="space-y-6">
             <div className="rounded-[28px] bg-[var(--background)] p-6">
               <h2 className="text-2xl font-bold">{notes.title}</h2>
-              <p className="mt-4 text-sm leading-7 text-muted">{notes.overview}</p>
+              <SimpleMarkdown className="mt-4" content={notes.overview} />
             </div>
 
             <div className="rounded-[28px] bg-[var(--background)] p-6">
@@ -110,9 +111,11 @@ export default function AILessonNotesClient({
                       <p className="font-semibold">{item.subtopic}</p>
                       <div className="mt-3 space-y-2">
                         {item.notes.map((note, noteIndex) => (
-                          <p key={`${note}-${noteIndex}`} className="text-sm text-muted">
-                            {note}
-                          </p>
+                          <SimpleMarkdown
+                            key={`${note}-${noteIndex}`}
+                            content={note}
+                            className="text-sm text-muted"
+                          />
                         ))}
                       </div>
                     </div>
@@ -128,7 +131,7 @@ export default function AILessonNotesClient({
               <div className="mt-4 space-y-3">
                 {notes.examLinks.map((point, index) => (
                   <div key={`${point}-${index}`} className="rounded-[20px] bg-[var(--surface-strong)] p-4 text-sm text-muted">
-                    {point}
+                    <SimpleMarkdown content={point} />
                   </div>
                 ))}
               </div>
@@ -139,7 +142,7 @@ export default function AILessonNotesClient({
               <div className="mt-4 space-y-3">
                 {notes.quickCheck.map((point, index) => (
                   <div key={`${point}-${index}`} className="rounded-[20px] bg-[var(--surface-strong)] p-4 text-sm text-muted">
-                    {point}
+                    <SimpleMarkdown content={point} />
                   </div>
                 ))}
               </div>

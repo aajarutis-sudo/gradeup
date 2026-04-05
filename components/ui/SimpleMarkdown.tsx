@@ -6,7 +6,7 @@ type SimpleMarkdownProps = {
 export default function SimpleMarkdown({ content, className }: SimpleMarkdownProps) {
   const lines = content.split(/\r?\n/);
   const blocks: Array<
-    | { type: "h1" | "h2"; text: string }
+    | { type: "h1" | "h2" | "h3"; text: string }
     | { type: "p"; text: string }
     | { type: "ul"; items: string[] }
     | { type: "ol"; items: string[] }
@@ -48,16 +48,21 @@ export default function SimpleMarkdown({ content, className }: SimpleMarkdownPro
     flushList();
 
     if (line.startsWith("# ")) {
-      blocks.push({ type: "h1", text: line.slice(2).trim() });
+      blocks.push({ type: "h1", text: cleanInlineMarkdown(line.slice(2).trim()) });
       continue;
     }
 
     if (line.startsWith("## ")) {
-      blocks.push({ type: "h2", text: line.slice(3).trim() });
+      blocks.push({ type: "h2", text: cleanInlineMarkdown(line.slice(3).trim()) });
       continue;
     }
 
-    blocks.push({ type: "p", text: line });
+    if (line.startsWith("### ")) {
+      blocks.push({ type: "h3", text: cleanInlineMarkdown(line.slice(4).trim()) });
+      continue;
+    }
+
+    blocks.push({ type: "p", text: cleanInlineMarkdown(line) });
   }
 
   flushList();
@@ -81,11 +86,19 @@ export default function SimpleMarkdown({ content, className }: SimpleMarkdownPro
           );
         }
 
+        if (block.type === "h3") {
+          return (
+            <h4 key={`h3-${index}`} className="mt-5 text-base font-semibold text-[var(--foreground)] first:mt-0">
+              {block.text}
+            </h4>
+          );
+        }
+
         if (block.type === "ul") {
           return (
             <ul key={`ul-${index}`} className="mt-3 space-y-2 pl-5 text-sm leading-7 text-muted list-disc">
               {block.items.map((item, itemIndex) => (
-                <li key={`${item}-${itemIndex}`}>{item}</li>
+                <li key={`${item}-${itemIndex}`}>{cleanInlineMarkdown(item)}</li>
               ))}
             </ul>
           );
@@ -95,7 +108,7 @@ export default function SimpleMarkdown({ content, className }: SimpleMarkdownPro
           return (
             <ol key={`ol-${index}`} className="mt-3 space-y-2 pl-5 text-sm leading-7 text-muted list-decimal">
               {block.items.map((item, itemIndex) => (
-                <li key={`${item}-${itemIndex}`}>{item}</li>
+                <li key={`${item}-${itemIndex}`}>{cleanInlineMarkdown(item)}</li>
               ))}
             </ol>
           );
@@ -109,4 +122,13 @@ export default function SimpleMarkdown({ content, className }: SimpleMarkdownPro
       })}
     </div>
   );
+}
+
+function cleanInlineMarkdown(text: string) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, "$1")
+    .replace(/__(.*?)__/g, "$1")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/^\>\s?/, "")
+    .trim();
 }

@@ -45,7 +45,7 @@ export default function StreakHeatmap({
               background: day.active
                 ? "var(--accent)"
                 : day.isToday
-                  ? "color-mix(in srgb, var(--primary) 18%, var(--surface-strong))"
+                  ? "color-mix(in srgb, var(--primary) 32%, var(--surface-strong))"
                   : "var(--surface-strong)",
               borderColor: day.isToday
                 ? "color-mix(in srgb, var(--primary) 75%, white 25%)"
@@ -55,13 +55,18 @@ export default function StreakHeatmap({
             title={day.key}
           >
             {day.isToday ? (
-              <span
-                className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full"
-                style={{
-                  background: day.active ? "white" : "var(--primary)",
-                  boxShadow: "0 0 0 2px color-mix(in srgb, var(--surface-strong) 55%, transparent)",
-                }}
-              />
+              <>
+                <span
+                  className="absolute right-2 top-2 h-2.5 w-2.5 rounded-full"
+                  style={{
+                    background: day.active ? "white" : "var(--primary)",
+                    boxShadow: "0 0 0 2px color-mix(in srgb, var(--surface-strong) 55%, transparent)",
+                  }}
+                />
+                <span className="absolute bottom-2 left-2 rounded-full bg-[var(--primary)] px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.12em] text-white">
+                  Today
+                </span>
+              </>
             ) : null}
           </div>
         ))}

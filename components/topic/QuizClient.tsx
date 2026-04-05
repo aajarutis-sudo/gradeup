@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState, useTransition } from "react";
 import Button from "@/components/ui/Button";
 
@@ -32,6 +33,14 @@ export default function QuizClient({
   }, [answers, questions]);
 
   const allAnswered = questions.every((question) => Boolean(answers[question.id]));
+  const incorrectCount = questions.length - score;
+  const scorePercent = questions.length ? Math.round((score / questions.length) * 100) : 0;
+  const nextStepLabel =
+    scorePercent >= 80
+      ? "Strong run. Lock it in with a second pass or move into practice questions."
+      : scorePercent >= 50
+        ? "Solid start. Flashcards and one more quiz pass should tighten the weaker gaps."
+        : "Use the flashcards first, then come back for another quiz attempt while the topic is still fresh.";
 
   const submitQuiz = () => {
     if (!allAnswered) return;
@@ -133,6 +142,49 @@ export default function QuizClient({
             {isPending ? "Saving..." : submitted ? "Completed" : "Submit Quiz"}
           </Button>
         </div>
+
+        {submitted ? (
+          <div className="mt-5 space-y-4 rounded-[24px] bg-[var(--background)] p-5">
+            <div className="grid gap-3 sm:grid-cols-3">
+              <div className="rounded-[20px] bg-[var(--surface-strong)] p-4">
+                <p className="text-sm text-muted">Score</p>
+                <p className="mt-2 text-2xl font-bold">{scorePercent}%</p>
+              </div>
+              <div className="rounded-[20px] bg-[var(--surface-strong)] p-4">
+                <p className="text-sm text-muted">Correct</p>
+                <p className="mt-2 text-2xl font-bold">{score}</p>
+              </div>
+              <div className="rounded-[20px] bg-[var(--surface-strong)] p-4">
+                <p className="text-sm text-muted">To review</p>
+                <p className="mt-2 text-2xl font-bold">{incorrectCount}</p>
+              </div>
+            </div>
+            <div className="rounded-[20px] bg-[var(--surface-strong)] p-4">
+              <p className="text-sm font-semibold">What to do next</p>
+              <p className="mt-2 text-sm text-muted">{nextStepLabel}</p>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Link
+                href={`/topics/${topicSlug}/flashcards`}
+                className="inline-flex rounded-full bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white"
+              >
+                Review flashcards
+              </Link>
+              <Link
+                href={`/topics/${topicSlug}/practice`}
+                className="inline-flex rounded-full bg-[var(--surface-strong)] px-4 py-2 text-sm font-semibold"
+              >
+                Practice questions
+              </Link>
+              <Link
+                href={`/topics/${topicSlug}`}
+                className="inline-flex rounded-full bg-[var(--surface-strong)] px-4 py-2 text-sm font-semibold"
+              >
+                Back to topic
+              </Link>
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );

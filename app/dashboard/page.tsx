@@ -23,14 +23,29 @@ export default async function DashboardPage() {
     redirect("/onboarding");
   }
 
-  const [subjects, latestPrediction, focusAreas, latestProgress, streakEntries, xp] = await Promise.all([
+  const [selectedSubjects, latestPrediction, focusAreas, latestProgress, streakEntries, xp] = await Promise.all([
     prisma.subject.findMany({
       where: {
-        userSelections: {
-          some: {
-            userId: viewer.id,
+        OR: [
+          {
+            userSelections: {
+              some: {
+                userId: viewer.id,
+              },
+            },
           },
-        },
+          {
+            topics: {
+              some: {
+                progress: {
+                  some: {
+                    userId: viewer.id,
+                  },
+                },
+              },
+            },
+          },
+        ],
       },
       include: {
         topics: {
@@ -73,6 +88,44 @@ export default async function DashboardPage() {
       where: { userId: viewer.id },
     }),
   ]);
+
+  const fallbackSubjectIds = Array.from(
+    new Set(
+      [
+        latestPrediction?.subjectId,
+        latestProgress?.topic.subjectId,
+        ...focusAreas.map((focus) => focus.subjectId),
+      ].filter(Boolean)
+    )
+  ) as string[];
+
+  const fallbackSubjects =
+    !selectedSubjects.length && fallbackSubjectIds.length
+      ? await prisma.subject.findMany({
+        where: {
+          id: {
+            in: fallbackSubjectIds,
+          },
+        },
+        include: {
+          topics: {
+            include: {
+              progress: {
+                where: { userId: viewer.id },
+              },
+            },
+          },
+          userSelections: {
+            where: {
+              userId: viewer.id,
+            },
+          },
+        },
+        orderBy: { title: "asc" },
+      })
+      : [];
+
+  const subjects = selectedSubjects.length ? selectedSubjects : fallbackSubjects;
 
   const streakLength = getStreakLength(streakEntries.map((entry) => entry.dateKey));
   const hasSubjects = subjects.length > 0;
