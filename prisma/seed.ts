@@ -49,6 +49,57 @@ type SubjectBlueprint = {
   topics: TopicBlueprint[];
 };
 
+function uniqueStrings(values: string[]) {
+  return values.filter((value, index) => values.indexOf(value) === index);
+}
+
+function hashString(input: string) {
+  return input.split("").reduce((total, char) => total + char.charCodeAt(0), 0);
+}
+
+function buildExpandedSubtopics(subject: SubjectBlueprint, topic: TopicBlueprint) {
+  const context = `${subject.title} ${topic.title} ${topic.summary}`.toLowerCase();
+  const extras: string[] = [];
+
+  if (/(paper|writing|essay|analysis|comparison|speaking|listening|reading|translation|evaluation)/.test(context)) {
+    extras.push("exam technique", "model responses");
+  }
+
+  if (/(practical|fieldwork|data|graphs|calculations|methods|variables)/.test(context)) {
+    extras.push("methods and variables", "data analysis");
+  }
+
+  if (/(case study|examples|context|history|geography|literature|religious|classics)/.test(context)) {
+    extras.push("named examples or context");
+  }
+
+  if (/(language|grammar|vocabulary|translation|speaking|listening|reading|writing)/.test(context)) {
+    extras.push("key vocabulary and grammar");
+  }
+
+  if (/(biology|chemistry|physics|science|combined|cells|energy|forces|electricity|atomic)/.test(context)) {
+    extras.push("required practical links");
+  }
+
+  if (/(business|economics|construction|engineering|design|media|digital|health|care)/.test(context)) {
+    extras.push("real-world application");
+  }
+
+  if (/(math|algebra|probability|geometry|trigonometry|statistics)/.test(context)) {
+    extras.push("worked examples", "common mistakes");
+  }
+
+  const fallbackExtras = [
+    "key terminology",
+    "common misconceptions",
+    "applied questions",
+    "revision checkpoints",
+  ];
+
+  const targetCount = 4 + (hashString(topic.slug) % 3);
+  return uniqueStrings([...topic.subtopics, ...extras, ...fallbackExtras]).slice(0, targetCount);
+}
+
 const subjectBlueprints: SubjectBlueprint[] = [
   {
     slug: "english-language",
@@ -693,7 +744,7 @@ async function main() {
         },
       });
 
-      for (const [subtopicIndex, subtopicTitle] of topicBlueprint.subtopics.entries()) {
+      for (const [subtopicIndex, subtopicTitle] of buildExpandedSubtopics(subjectBlueprint, topicBlueprint).entries()) {
         await prisma.subtopic.create({
           data: {
             topicId: topic.id,
