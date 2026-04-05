@@ -27,9 +27,6 @@ export default async function OnboardingPage() {
             <a href="/onboarding/subjects" className="inline-flex rounded-full bg-[var(--primary)] px-6 py-3 text-sm font-semibold text-white">
               Start diagnostic quiz
             </a>
-            <a href="/chat" className="inline-flex rounded-full bg-[var(--background)] px-6 py-3 text-sm font-semibold">
-              Open AI Coach
-            </a>
           </div>
         </Card>
       </OnboardingShell>

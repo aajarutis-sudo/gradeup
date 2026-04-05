@@ -33,11 +33,15 @@ export default function StreakHeatmap({
         {recentDays.map((day) => (
           <div
             key={day.key}
-            className={`h-12 rounded-2xl border ${day.isToday ? "ring-2 ring-[var(--primary)]/50" : ""}`}
+            className={`h-12 rounded-2xl border ${day.isToday ? "ring-2 ring-[var(--primary)]" : ""}`}
             style={{
-              background: day.active ? "var(--accent)" : "var(--surface-strong)",
-              borderColor: "var(--border)",
-              opacity: day.active ? 1 : 0.7,
+              background: day.active
+                ? "var(--accent)"
+                : day.isToday
+                  ? "color-mix(in srgb, var(--accent) 22%, var(--surface-strong))"
+                  : "var(--surface-strong)",
+              borderColor: day.isToday ? "var(--primary)" : "var(--border)",
+              opacity: day.active || day.isToday ? 1 : 0.7,
             }}
             title={day.key}
           />

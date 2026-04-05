@@ -94,12 +94,15 @@ export default async function HomePage() {
                     </div>
                   ))}
                 </div>
-                <div className="mt-4 space-y-3">
+                <div className="surface-soft mt-4 rounded-[30px] border border-[var(--border)] p-4">
+                  <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--primary)]">Why it works</p>
+                  <div className="mt-3 space-y-3">
                   {productValues.map((value, index) => (
                     <div key={value} className={`rounded-3xl bg-[var(--background)] p-4 text-sm text-muted animate-fade-up stagger-${(index % 4) + 1}`}>
                       {value}
                     </div>
                   ))}
+                  </div>
                 </div>
               </Card>
             </div>

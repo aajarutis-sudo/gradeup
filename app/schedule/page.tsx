@@ -84,13 +84,13 @@ export default async function SchedulePage() {
                 </div>
                 <h2 className="mt-2 text-lg font-semibold leading-6">{slot.topic.title}</h2>
                 <p className="mt-1 text-sm text-muted">{slot.topic.subject.name ?? slot.topic.subject.title}</p>
-                <div className="mt-3 space-y-1.5 text-xs text-muted">
-                  <p>{slot.sessionLabel}</p>
-                  <p>Focus block: {slot.focusMinutes} minutes</p>
-                  <p>Break after session: {slot.breakMinutes} minutes</p>
-                  <p>
-                  Current progress: {slot.topic.progress?.[0]?.completed ?? 0}%
-                  </p>
+                <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                  <span className="rounded-full bg-[var(--surface-strong)] px-3 py-1 text-muted">
+                    {slot.sessionLabel}
+                  </span>
+                  <span className="rounded-full bg-[var(--surface-strong)] px-3 py-1 text-muted">
+                    {slot.focusMinutes} min focus
+                  </span>
                 </div>
                 <div className="mt-3 flex items-center justify-end gap-3">
                   <Link href={`/topics/${slot.topic.slug}`} className="text-sm font-semibold text-[var(--primary)]">

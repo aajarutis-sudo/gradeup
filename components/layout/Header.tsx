@@ -14,7 +14,7 @@ export default function Header() {
         <div className="flex items-center gap-6">
           <Logo />
           <div className="hidden lg:block">
-            <p className="text-sm font-semibold">Keep your next revision step visible</p>
+            <p className="text-sm font-semibold">Everything you need to revise without the clutter.</p>
             <p className="mt-1 text-sm text-muted">Use the sidebar to move between subjects, schedule, streaks, and AI tools.</p>
           </div>
         </div>
