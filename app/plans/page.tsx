@@ -74,7 +74,7 @@ export default async function PlansPage() {
                   </div>
                 ))}
               </div>
-              <div className="mt-6 rounded-[24px] bg-[color-mix(in_srgb,var(--primary)_8%,transparent)] p-4 text-sm text-muted">
+              <div className="surface-soft mt-6 rounded-[24px] border border-[var(--border)] p-4 text-sm italic text-muted">
                 Price not final yet. The goal is to keep the core revision layer strong and only charge for the expensive AI features.
               </div>
               <div className="mt-6 flex flex-wrap gap-3">

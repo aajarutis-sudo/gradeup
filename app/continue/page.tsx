@@ -43,7 +43,7 @@ export default async function ContinuePage() {
             <div className="space-y-4">
               <p className="text-muted">No progress yet. Start with any subject and your latest topic will appear here.</p>
               <Link href="/subjects" className="inline-flex rounded-full bg-[var(--primary)] px-4 py-2 text-sm font-semibold text-white">
-                Open subjects
+                Browse subjects
               </Link>
             </div>
           )}

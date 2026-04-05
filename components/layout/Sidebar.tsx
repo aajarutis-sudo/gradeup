@@ -33,7 +33,7 @@ export default function Sidebar() {
               className={`block rounded-3xl px-4 py-3 transition ${
                 active
                   ? "bg-[var(--primary)] text-white"
-                  : "bg-[var(--background)] text-[var(--foreground)] hover:bg-[var(--background-elevated)]"
+                  : "bg-[color-mix(in_srgb,var(--background)_84%,var(--accent)_16%)] text-[var(--foreground)] hover:bg-[color-mix(in_srgb,var(--background)_70%,var(--accent)_30%)]"
               }`}
             >
               <p className="font-semibold">{link.label}</p>

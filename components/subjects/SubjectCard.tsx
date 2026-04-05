@@ -43,9 +43,8 @@ export default function SubjectCard({
           </span>
         </div>
         <ProgressBar value={completion} label="Overall completion" />
-        <div className="flex items-center justify-between pt-1 text-sm">
-          <span className="text-muted">{completion > 0 ? "Keep moving" : "Ready to start"}</span>
-          <span className="font-semibold text-[var(--primary)] opacity-0 transition group-hover:opacity-100">
+        <div className="flex justify-end pt-1 text-sm">
+          <span className="rounded-full bg-[color-mix(in_srgb,var(--primary)_10%,transparent)] px-4 py-2 font-semibold text-[var(--primary)] transition group-hover:bg-[color-mix(in_srgb,var(--primary)_18%,transparent)]">
             Start revising →
           </span>
         </div>

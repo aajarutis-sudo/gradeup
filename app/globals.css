@@ -6,6 +6,7 @@
   --foreground: #111827;
   --muted: #6b7280;
   --border: rgba(17, 24, 39, 0.08);
+  --surface-soft: #f3efe9;
   --primary: #4f46e5;
   --secondary: #6366f1;
   --accent: #a5b4fc;
@@ -13,9 +14,9 @@
   --warning: #f59e0b;
   --danger: #ef4444;
   --shadow: 0 24px 60px rgba(79, 70, 229, 0.09);
-  --hero-gradient: radial-gradient(circle at top left, rgba(165, 180, 252, 0.42), transparent 34%),
-    radial-gradient(circle at top right, rgba(79, 70, 229, 0.18), transparent 28%),
-    linear-gradient(180deg, #ffffff 0%, #f3f4f6 100%);
+  --hero-gradient: radial-gradient(circle at top left, rgba(165, 180, 252, 0.34), transparent 34%),
+    radial-gradient(circle at top right, rgba(251, 191, 36, 0.14), transparent 26%),
+    linear-gradient(180deg, #fffdf9 0%, #f6f1e8 48%, #f4f4f3 100%);
 }
 
 .dark {
@@ -24,6 +25,7 @@
   --foreground: #e5e7eb;
   --muted: #9ca3af;
   --border: rgba(229, 231, 235, 0.09);
+  --surface-soft: rgba(255, 255, 255, 0.06);
   --primary: #6366f1;
   --secondary: #4f46e5;
   --accent: #a5b4fc;
@@ -74,6 +76,10 @@ textarea {
   background: var(--background-elevated);
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
+}
+
+.surface-soft {
+  background: var(--surface-soft);
 }
 
 .glass-panel {
